@@ -34,12 +34,14 @@ static void printMenu(void)
 
 void menuChoiceAppend()
 {
+   list = append(list, 12345, "Joao");
 }
 
 /* ******************************************** */
 
 void menuChoicePrint()
 {
+   print(list);
 }
 
 /* ******************************************** */

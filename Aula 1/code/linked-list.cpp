@@ -17,11 +17,39 @@ namespace base {
 
    Node* append(Node* list, uint32_t nmec, char *name)
    {
-      return NULL;
+      // Implement this function to append a new student to the end of the list.
+      Node* newNode = (Node*)malloc(sizeof(Node));
+      if (newNode == NULL) {
+         fprintf(stderr, "Memory allocation failed\n");
+         exit(EXIT_FAILURE);
+      }
+      newNode->reg.nmec = nmec;
+      newNode->reg.name = name;
+
+      newNode->next = NULL;
+
+      if (list == NULL) {
+         // If the list is empty, make the new node the head of the list.
+         return newNode;
+      }
+
+      // Find the last node and link the new node to it.
+      Node* current = list;
+      while (current->next != NULL) {
+         current = current->next;
+      }
+      current->next = newNode;
+
+      return list;
    }
 
    void print(Node* list)
    {
+      Node* current = list;
+      while (current != NULL) {
+            printf("NMEC: %u, Name: %s\n", current->reg.nmec, current->reg.name);
+            current = current->next;
+      }
    }
 
    int exists(Node* list, uint32_t nmec)
