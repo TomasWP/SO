@@ -1,16 +1,16 @@
 CXX = g++
 CXXFLAGS = -Wall -Wfatal-errors -ggdb -pthread
 
-TARGETS = bb-unsafe bb-safe
+TARGETS = main, ex2
 
-.PHONY:	all clean cleanall
+.PHONY:	clean cleanall
 
 all: $(TARGETS)
 
-bb-unsafe: main.o bwdelay.o fifo-unsafe.o thread.o utils.o
+main: main.o utils.o
 	$(CXX) -o $@ $^ $(CXXFLAGS)
 
-bb-safe: main.o bwdelay.o fifo-safe.o thread.o utils.o
+ex2: ex2.o utils.o
 	$(CXX) -o $@ $^ $(CXXFLAGS)
 
 clean:
