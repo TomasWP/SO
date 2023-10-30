@@ -17,58 +17,29 @@
 
 #include <stdint.h>
 #include  "settings.h"
+#include "thread.h"
+#include "process.h"
 
-// TODO point: uncomment the desired implementation
-//#include "thread.h"
-//#include "process.h"
 typedef struct
 {
    struct
    {
-      int id;         // element ID (works as an index in array all_patients)
-      int priority;   // patient priority in FIFO
+      uint32_t id;         // element ID (works as an index in array all_patients)
+      uint32_t priority;   // patient priority in FIFO
    } array[FIFO_MAXSIZE];
-   int inp;  ///< point of insertion (queue tail)
-   int out;  ///< point of retrieval (queue head)
-   int cnt;  ///< number of items stored
-   pthread_mutex_t lock;  // Mutex for synchronization
+   uint32_t inp;  ///< point of insertion (queue tail)
+   uint32_t out;  ///< point of retrieval (queue head)
+   uint32_t cnt;  ///< number of items stored
+   pthread_mutex_t access;    // Exclusive access to the FIFO
+   pthread_cond_t not_empty;  // Condition variable to signal that the FIFO is not empty
+   pthread_cond_t not_full;   // Condition variable to signal that the FIFO is not full
 } PriorityFIFO;
 
-void init_pfifo(PriorityFIFO* pfifo) {
-    pfifo->inp = 0;
-    pfifo->out = 0;
-    pfifo->cnt = 0;
-    pthread_mutex_init(&pfifo->lock, NULL);
-}
-
-void term_pfifo(PriorityFIFO* pfifo) {
-    // Não há necessidade de limpar a memória da fila, pois ela é estática
-    pthread_mutex_destroy(&pfifo->lock);
-}
-
-void insert_pfifo(PriorityFIFO* pfifo, int id, int priority) {
-    pthread_mutex_lock(&pfifo->lock);
-    // Verifique se a fila não está cheia
-    if (pfifo->cnt != FIFO_MAXSIZE) {
-        pfifo->array[pfifo->inp].id = id;
-        pfifo->array[pfifo->inp].priority = priority;
-        pfifo->inp = (pfifo->inp + 1) % FIFO_MAXSIZE;
-        pfifo->cnt++;
-    }
-    pthread_mutex_unlock(&pfifo->lock);
-}
-
-int retrieve_pfifo(PriorityFIFO* pfifo) {
-    pthread_mutex_lock(&pfifo->lock);
-    int id = -1; // Retorne -1 se a fila estiver vazia
-    // Verifique se a fila não está vazia
-    if (pfifo->cnt != 0) {
-        id = pfifo->array[pfifo->out].id;
-        pfifo->out = (pfifo->out + 1) % FIFO_MAXSIZE;
-        pfifo->cnt--;
-    }
-    pthread_mutex_unlock(&pfifo->lock);
-    return id;
-}
+void init_pfifo(PriorityFIFO* pfifo);
+int empty_pfifo(PriorityFIFO* pfifo);
+int full_pfifo(PriorityFIFO* pfifo);
+void insert_pfifo(PriorityFIFO* pfifo, uint32_t id, uint32_t priority);
+uint32_t retrieve_pfifo(PriorityFIFO* pfifo);
+void print_pfifo(PriorityFIFO* pfifo);
 
 #endif

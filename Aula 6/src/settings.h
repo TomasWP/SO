@@ -88,6 +88,11 @@
 #define check_valid_doctor_id(id) do { if(id >= MAX_DOCTORS) { printf("\e[31;01m[%s, line %d, function %s] ERROR: invalid doctor ID %u!\e[0m\n", __FILE__, __LINE__, __FUNCTION__, id); exit(EXIT_FAILURE); } } while(0)
 
 /**
+ *  \brief id verification test
+ */
+#define check_valid_id(id) do { if(id > MAX_ID) { printf("\e[31;01m[%s, line %d, function %s] ERROR: invalid ID %u!\e[0m\n", __FILE__, __LINE__, __FUNCTION__, id); exit(EXIT_FAILURE); } } while(0)
+
+/**
  *  \brief priority verification test
  */
 #define check_valid_priority(priority) do { if(priority < 1 || priority > MAX_PRIORITY) { printf("\e[31;01m[%s, line %d, function %s] ERROR: invalid priority %u!\e[0m\n", __FILE__, __LINE__, __FUNCTION__, priority); exit(EXIT_FAILURE); } } while(0)
