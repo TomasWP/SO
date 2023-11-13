@@ -1,0 +1,2 @@
+/usr/bin/ar qc /home/tomas/SO/Projeto/somm23-grp/lib/libfrontend.a CMakeFiles/frontend.dir/sim.cpp.o CMakeFiles/frontend.dir/pct.cpp.o CMakeFiles/frontend.dir/feq.cpp.o CMakeFiles/frontend.dir/mem.cpp.o CMakeFiles/frontend.dir/swp.cpp.o
+/usr/bin/ranlib /home/tomas/SO/Projeto/somm23-grp/lib/libfrontend.a
