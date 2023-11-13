@@ -1,0 +1,2 @@
+/usr/bin/ar qc /home/tomas/SO/Projeto/somm23-grp/lib/libsim.a CMakeFiles/sim.dir/sim_init.cpp.o CMakeFiles/sim.dir/sim_close.cpp.o CMakeFiles/sim.dir/sim_load.cpp.o CMakeFiles/sim.dir/sim_fill.cpp.o CMakeFiles/sim.dir/sim_print.cpp.o CMakeFiles/sim.dir/sim_get_process.cpp.o CMakeFiles/sim.dir/sim_step.cpp.o CMakeFiles/sim.dir/sim_run.cpp.o
+/usr/bin/ranlib /home/tomas/SO/Projeto/somm23-grp/lib/libsim.a
