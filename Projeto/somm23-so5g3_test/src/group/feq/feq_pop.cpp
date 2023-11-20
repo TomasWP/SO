@@ -1,0 +1,33 @@
+/*
+ *  \author ...
+ */
+
+#include "somm23.h"
+
+namespace group 
+{
+
+// ================================================================================== //
+
+    FutureEvent feqPop()
+    {
+        soProbe(205, "%s()\n", __func__);
+
+        /* TODO POINT: Replace next instruction with your code */
+        throw Exception(ENOSYS, __func__);
+    }
+
+// ================================================================================== //
+
+    bool feqIsEmpty()
+    {
+        soProbe(206, "%s()\n", __func__);
+
+        /* TODO POINT: Replace next instruction with your code */
+        throw Exception(ENOSYS, __func__);
+    }
+
+// ================================================================================== //
+
+} // end of namespace group
+
