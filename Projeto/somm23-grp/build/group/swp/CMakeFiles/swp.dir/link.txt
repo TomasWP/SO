@@ -1,2 +1,0 @@
-/usr/bin/ar qc /home/tomas/SO/Projeto/somm23-grp/lib/libswp.a CMakeFiles/swp.dir/swp_init.cpp.o CMakeFiles/swp.dir/swp_close.cpp.o CMakeFiles/swp.dir/swp_print.cpp.o CMakeFiles/swp.dir/swp_add.cpp.o CMakeFiles/swp.dir/swp_peek.cpp.o CMakeFiles/swp.dir/swp_remove.cpp.o
-/usr/bin/ranlib /home/tomas/SO/Projeto/somm23-grp/lib/libswp.a

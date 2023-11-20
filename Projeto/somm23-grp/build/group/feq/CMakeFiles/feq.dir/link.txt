@@ -1,2 +1,0 @@
-/usr/bin/ar qc /home/tomas/SO/Projeto/somm23-grp/lib/libfeq.a CMakeFiles/feq.dir/feq_init.cpp.o CMakeFiles/feq.dir/feq_close.cpp.o CMakeFiles/feq.dir/feq_print.cpp.o CMakeFiles/feq.dir/feq_insert.cpp.o CMakeFiles/feq.dir/feq_pop.cpp.o
-/usr/bin/ranlib /home/tomas/SO/Projeto/somm23-grp/lib/libfeq.a
