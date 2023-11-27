@@ -14,7 +14,15 @@ namespace group
         soProbe(205, "%s()\n", __func__);
 
         /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        if(feqIsEmpty()){
+            throw Exception(EINVAL, __func__);
+        }
+        
+        FutureEvent event = feqHead->event;
+        FeqEventNode* p1 = feqHead;
+        feqHead = feqHead->next;
+        free(p1);
+        return event;
     }
 
 // ================================================================================== //
@@ -24,7 +32,7 @@ namespace group
         soProbe(206, "%s()\n", __func__);
 
         /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        return feqHead == NULL;
     }
 
 // ================================================================================== //
