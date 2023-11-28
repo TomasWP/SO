@@ -1,0 +1,2 @@
+/usr/bin/ar qc /home/tomas/SO/Projeto/somm23-so5g3_test/lib/libpct.a CMakeFiles/pct.dir/pct_init.cpp.o CMakeFiles/pct.dir/pct_term.cpp.o CMakeFiles/pct.dir/pct_print.cpp.o CMakeFiles/pct.dir/pct_insert.cpp.o CMakeFiles/pct.dir/pct_getters.cpp.o CMakeFiles/pct.dir/pct_update_state.cpp.o
+/usr/bin/ranlib /home/tomas/SO/Projeto/somm23-so5g3_test/lib/libpct.a

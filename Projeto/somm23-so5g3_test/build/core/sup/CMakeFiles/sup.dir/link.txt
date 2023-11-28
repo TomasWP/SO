@@ -1,0 +1,2 @@
+/usr/bin/ar qc /home/tomas/SO/Projeto/somm23-so5g3_test/lib/libsup.a CMakeFiles/sup.dir/exception.cpp.o CMakeFiles/sup.dir/probing.cpp.o CMakeFiles/sup.dir/binselection.cpp.o
+/usr/bin/ranlib /home/tomas/SO/Projeto/somm23-so5g3_test/lib/libsup.a
