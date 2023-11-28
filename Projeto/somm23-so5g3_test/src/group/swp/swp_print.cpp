@@ -19,31 +19,23 @@ void swpPrint(FILE *fout)
     try {
         require(fout != NULL && fileno(fout) != -1, "fout must be a valid file stream");
 
-        auto printSeparatorLine = [&]() {
-            fprintf(fout, "+");
-            for (int i = 0; i < 35; ++i) {
-                fprintf(fout, "=");
-            }
-            fprintf(fout, "+\n");
-        };
-
-        printSeparatorLine();
-        fprintf(fout, "|%*sSwapped Process Queue%*s|\n", 10, "", 10, "");
-        fprintf(fout, "+-------+---------------------------------------+\n");
-        fprintf(fout, "|%*sPID%*s|%*sAddress Space Profile%*s|\n", 8, "", 8, "", 16, "", 7, "");
-        fprintf(fout, "+-------+---------------------------------------+\n");
+        printf("+===============================================+\n");
+        printf("|             Swapped Process Queue             |\n");
+        printf("+===============================================+\n");
+        printf("|  PID  |         address space profile         |\n");
+        printf("+===============================================+\n");
 
         SwpNode *current = swpHead;  
         while (current != NULL) {
-            fprintf(fout, "| %8u | %-16p |\n",
+            fprintf(fout, "| %3u   | %17p                     |\n",
                     current->process.pid,
                     (void*)&current->process.profile  
                 );
 
             current = current->next;
         }
-        printSeparatorLine();
-        fprintf(fout, "+\n");
+        printf("+===============================================+\n");
+        printf("\n");
 
     } catch (const Exception& e) {
         

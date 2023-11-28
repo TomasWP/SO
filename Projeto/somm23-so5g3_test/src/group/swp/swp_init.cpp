@@ -17,7 +17,6 @@ namespace group
     {
         soProbe(401, "%s()\n", __func__);
 
-        /* TODO POINT: Replace next instruction with your code */
         swpHead = NULL;
         swpTail = NULL;
 

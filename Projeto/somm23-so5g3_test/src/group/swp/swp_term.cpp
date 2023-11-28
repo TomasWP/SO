@@ -13,8 +13,6 @@ namespace group
     {
         soProbe(402, "%s()\n", __func__);
 
-        /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
         while (swpHead != NULL)
         {
             SwpNode *aux = swpHead;

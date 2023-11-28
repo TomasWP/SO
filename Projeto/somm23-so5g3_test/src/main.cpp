@@ -256,6 +256,19 @@ int main(int argc, char *argv[])
     {
         simLoad(infile);
     }
+    AddressSpaceProfile *asp = new AddressSpaceProfile;
+    asp->segmentCount = 1;
+    asp->size[0] = 0x1000;
+    swpAdd(3, asp);
+    AddressSpaceProfile *asp2 = new AddressSpaceProfile;
+    asp2->segmentCount = 2;
+    asp2->size[0] = 0x2000;
+    swpAdd(4, asp2);
+    swpTerm();
+    AddressSpaceProfile *asp3 = new AddressSpaceProfile;
+    asp3->segmentCount = 2;
+    asp3->size[0] = 0x3000;
+    swpAdd(5, asp3);
     simPrint(fout); pctPrint(fout); feqPrint(fout); swpPrint(fout); memPrint(fout);
 }
 
