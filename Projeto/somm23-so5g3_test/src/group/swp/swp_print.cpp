@@ -21,13 +21,13 @@ void swpPrint(FILE *fout)
 
         printf("+===============================================+\n");
         printf("|             Swapped Process Queue             |\n");
-        printf("+===============================================+\n");
+        printf("+-------+---------------------------------------+\n");
         printf("|  PID  |         address space profile         |\n");
-        printf("+===============================================+\n");
+        printf("+-------+---------------------------------------+\n");
 
         SwpNode *current = swpHead;  
         while (current != NULL) {
-            fprintf(fout, "| %3u   | %17p                     |\n",
+            fprintf(fout, "| %5u | %17p                     |\n",
                     current->process.pid,
                     (void*)&current->process.profile  
                 );
