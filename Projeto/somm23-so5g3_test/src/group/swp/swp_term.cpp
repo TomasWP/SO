@@ -15,6 +15,12 @@ namespace group
 
         /* TODO POINT: Replace next instruction with your code */
         throw Exception(ENOSYS, __func__);
+        while (swpHead != NULL)
+        {
+            SwpNode *aux = swpHead;
+            swpHead = aux->next;
+            free(aux);
+        }
     }
 
 // ================================================================================== //
