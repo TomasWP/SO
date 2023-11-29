@@ -41,7 +41,6 @@ namespace group
                 memTreeRoot = NULL;
             }
         } catch (const Exception& e) {
-            // Propaga exceções
             throw e;
         }
 
