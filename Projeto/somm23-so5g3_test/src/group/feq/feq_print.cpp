@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  \author Afonso Baixo 108237
  */
 
 #include "somm23.h"
@@ -40,7 +40,7 @@ namespace group
         // Print process information
         struct FeqEventNode* current = feqHead; 
         while (current != NULL) {
-            const char *eventType = current->event.type == ARRIVAL ? "ARRIVAL" : current->event.type == TERMINATE ? "TERMINATE" : "UNKOWN";
+            const char *eventType = current->event.type == ARRIVAL ? "ARRIVAL" : current->event.type == TERMINATE ? "TERMINATE" : "UNKNOWN";
             fprintf(fout, "| %*u | %-*s | %*u |\n",
                 8, current->event.time,
                 9, eventType,
@@ -50,7 +50,7 @@ namespace group
             current = current->next;
         }
         printSeparatorLine();
-        fprintf(fout, "+\n");
+        fprintf(fout, "\n");
     }
 
 // ================================================================================== //

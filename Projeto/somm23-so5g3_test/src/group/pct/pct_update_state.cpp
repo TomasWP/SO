@@ -6,6 +6,8 @@
 
 #include <stdint.h>
 
+#include <stdexcept>
+
 namespace group 
 {
 
@@ -17,8 +19,23 @@ namespace group
 
         require(pid > 0, "a valid process ID must be greater than zero");
 
-        /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        struct PctNode* current = pctHead;
+
+        while (current != NULL) {
+            if (current->pcb.pid == pid) {
+                current->pcb.state = state;
+                if (state == ACTIVE) {
+                    current->pcb.activationTime = time;
+                    current->pcb.memMapping = *mapping;
+                } else if (state == FINISHED) {
+                    current->pcb.finishTime = time;
+                }
+                return;
+            }
+            current = current->next;
+        }
+
+        throw Exception(EINVAL, __func__);
     }
 
 // ================================================================================== //

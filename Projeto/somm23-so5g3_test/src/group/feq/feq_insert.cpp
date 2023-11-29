@@ -12,7 +12,7 @@ namespace group
     void feqInsert(FutureEventType type, uint32_t time, uint32_t pid)
     {
         const char *tas = type == ARRIVAL ? "ARRIVAL" : type == TERMINATE ? "TERMINATE"
-                                                                          : "UNKOWN";
+                                                                          : "UNKNOWN";
         soProbe(204, "%s(%s, %u, %u)\n", __func__, tas, time, pid);
 
         require(pid > 0, "process ID must be non-zero");
@@ -28,7 +28,7 @@ namespace group
         new_node->event.pid = pid;
         new_node->next = NULL;
 
-        if (feqHead == NULL || feqHead->event.time > time)
+        if (feqHead == NULL || feqHead->event.time > time || (feqHead->event.time == time && type == TERMINATE))
         {
             new_node->next = feqHead;
             feqHead = new_node;

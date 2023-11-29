@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  \author Afonso Baixo 108237
  */
 
 #include "somm23.h"
@@ -14,7 +14,12 @@ namespace group
         soProbe(102, "%s()\n", __func__);
 
         /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        memTerm();
+        swpTerm();
+        pctTerm();
+        feqTerm();
+
+        forthcomingTable.count = 0;
     }
 
 // ================================================================================== //

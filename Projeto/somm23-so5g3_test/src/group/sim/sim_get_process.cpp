@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  \author Afonso Baixo 108237
  */
 
 #include "somm23.h"
@@ -16,7 +16,11 @@ namespace group
         require(pid > 0, "a valid process ID must be greater than zero");
 
         /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        for(uint32_t i = 0; i < forthcomingTable.count ; i++){
+            if(forthcomingTable.process[i].pid == pid)
+                return &(forthcomingTable.process[i]);
+        }
+        throw Exception(EINVAL, __func__);
     }
 
 // ================================================================================== //

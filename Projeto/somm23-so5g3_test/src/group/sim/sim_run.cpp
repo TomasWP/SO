@@ -14,7 +14,10 @@ namespace group
         soProbe(108, "%s(%u)\n", __func__, cnt);
 
         /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        if (cnt == 0)
+            while(simStep());
+        else
+            for(uint32_t i = 0; i < cnt && simStep() ; i++);
     }
 
 // ================================================================================== //

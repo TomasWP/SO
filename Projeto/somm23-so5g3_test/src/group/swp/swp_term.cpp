@@ -12,7 +12,7 @@ namespace group
     void swpTerm()
     {
         soProbe(402, "%s()\n", __func__);
-
+        
         while (swpHead != NULL)
         {
             SwpNode *aux = swpHead;
@@ -24,3 +24,4 @@ namespace group
 // ================================================================================== //
 
 } // end of namespace group
+

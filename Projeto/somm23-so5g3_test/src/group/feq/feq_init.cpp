@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  \author Afonso Baixo 108237
  */
 
 #include "somm23.h"

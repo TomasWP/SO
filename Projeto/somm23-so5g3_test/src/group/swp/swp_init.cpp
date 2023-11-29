@@ -15,6 +15,7 @@ namespace group
     
     void swpInit()
     {
+         /* TODO POINT: Replace next instruction with your code */
         soProbe(401, "%s()\n", __func__);
 
         swpHead = NULL;
