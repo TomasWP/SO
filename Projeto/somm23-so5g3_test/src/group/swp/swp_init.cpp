@@ -15,12 +15,15 @@ namespace group
     
     void swpInit()
     {
-         /* TODO POINT: Replace next instruction with your code */
+        
         soProbe(401, "%s()\n", __func__);
-
-        swpHead = NULL;
-        swpTail = NULL;
-
+        try{
+            swpHead = NULL;
+            swpTail = NULL;
+        } catch (const Exception& e) {
+            // Propaga exceções
+            throw e;
+        }
     }
 
 // ================================================================================== //

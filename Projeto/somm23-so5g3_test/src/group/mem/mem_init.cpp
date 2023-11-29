@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  \author: Tomás Sousa Fonseca 107245
  */
 
 #include "somm23.h"
@@ -21,8 +21,30 @@ namespace group
         require((osSize % cSize) == 0, "memory size for OS must be a multiple of chunck size");
         require(policy == FirstFit or policy == BuddySystem, "policy must be FirstFit or BuddySystem");
 
-        /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        try{
+            memParameters.chunkSize = cSize;
+            memParameters.totalSize = mSize;
+            memParameters.kernelSize= osSize;
+            memParameters.policy    = policy;
+            memFreeHead = NULL;
+            memOccupiedHead = NULL;
+            memTreeRoot = NULL;
+
+            if (policy == FirstFit) 
+            {
+                memFreeHead = NULL;
+                memOccupiedHead = NULL;
+                
+            }
+            else if (policy == BuddySystem) 
+            {
+                memTreeRoot = NULL;
+            }
+        } catch (const Exception& e) {
+            // Propaga exceções
+            throw e;
+        }
+
     }
 
 // ================================================================================== //
