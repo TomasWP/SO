@@ -1,7 +1,8 @@
 group/pct/CMakeFiles/pct.dir/pct_print.cpp.o: \
  /home/tomas/SO/Projeto/somm23-so5g3_test/src/group/pct/pct_print.cpp \
  /usr/include/stdc-predef.h \
- /home/tomas/SO/Projeto/somm23-so5g3_test/include/somm23.h \
+ /home/tomas/SO/Projeto/somm23-so5g3_test/include/pct.h \
+ /home/tomas/SO/Projeto/somm23-so5g3_test/include/tme.h \
  /home/tomas/SO/Projeto/somm23-so5g3_test/include/dbc.h \
  /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -78,7 +79,7 @@ group/pct/CMakeFiles/pct.dir/pct_print.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /home/tomas/SO/Projeto/somm23-so5g3_test/include/binselection.h \
- /home/tomas/SO/Projeto/somm23-so5g3_test/include/tme.h \
+ /home/tomas/SO/Projeto/somm23-so5g3_test/include/somm23.h \
  /home/tomas/SO/Projeto/somm23-so5g3_test/include/pct.h \
  /home/tomas/SO/Projeto/somm23-so5g3_test/include/feq.h \
  /home/tomas/SO/Projeto/somm23-so5g3_test/include/swp.h \
