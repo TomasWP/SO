@@ -45,7 +45,6 @@ namespace group
             }
 
         } catch (const Exception& e) {
-            // Propaga exceções
             throw e;
         }
     }

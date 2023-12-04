@@ -12,12 +12,15 @@ namespace group
     void memTerm() 
     {
         soProbe(502, "%s()\n", __func__);
-
-        while (memFreeHead != NULL) 
-        {
-            MemListNode* temp = memFreeHead;
-            memFreeHead = memFreeHead->next;
-            delete temp;
+        try{        
+            while (memFreeHead != NULL) 
+            {
+                MemListNode* temp = memFreeHead;
+                memFreeHead = memFreeHead->next;
+                delete temp;
+            }
+        } catch (const Exception& e) {
+            throw e;
         }
     }
 
