@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  \author Diogo Borges - 102954
  */
 
 #include "somm23.h"
@@ -10,7 +10,6 @@
 
 namespace group 
 {
-
 // ================================================================================== //
 
     void pctUpdateState(uint32_t pid, ProcessState state, uint32_t time = NO_TIME, AddressSpaceMapping *mapping = NULL)
@@ -19,23 +18,25 @@ namespace group
 
         require(pid > 0, "a valid process ID must be greater than zero");
 
-        struct PctNode* current = pctHead;
-
-        while (current != NULL) {
-            if (current->pcb.pid == pid) {
-                current->pcb.state = state;
-                if (state == ACTIVE) {
-                    current->pcb.activationTime = time;
-                    current->pcb.memMapping = *mapping;
-                } else if (state == FINISHED) {
-                    current->pcb.finishTime = time;
-                }
-                return;
-            }
+        PctNode* current = pctHead;
+        while (current != NULL && current->pcb.pid != pid) {
             current = current->next;
         }
 
-        throw Exception(EINVAL, __func__);
+        if (current == NULL) {
+            throw Exception(EINVAL, __func__);
+        }
+
+        current->pcb.state = state;
+        if (state == ACTIVE) {
+            if (time == NO_TIME || mapping == NULL) {
+                throw Exception(EINVAL, __func__);
+            }
+            current->pcb.activationTime = time;
+            current->pcb.memMapping = *mapping;
+        } else if (state == FINISHED) {
+            current->pcb.finishTime = time;
+        }
     }
 
 // ================================================================================== //
