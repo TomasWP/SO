@@ -102,9 +102,6 @@ namespace group
 
         struct PctNode* current = pctHead;
 
-        if (current == NULL)
-            throw(EINVAL, __func__);
-
         while (current != NULL) {
             const char* state = pctGetStateAsString(current->pcb.pid);
 

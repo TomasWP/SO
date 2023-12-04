@@ -34,18 +34,15 @@ namespace group
 // ================================================================================== //
     
     MemTreeNode* findNode(MemTreeNode* node, Address address) {
-        if (node == NULL) {
+        if (node == NULL) 
             return NULL;
-        }
 
-        if (node->block.address == address && node->state == OCCUPIED) {
+        if (node->block.address == address && node->state == OCCUPIED) 
             return node;
-        }
 
         MemTreeNode* left = findNode(node->left, address);
-        if (left != NULL) {
+        if (left != NULL)
             return left;
-        }
 
         return findNode(node->right, address);
     }
