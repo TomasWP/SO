@@ -26,13 +26,13 @@
  *   - an estimation of the effort required to implement it;
  *   - a brief description of the function role.
  *   <table>
- *   <tr> <th> \c function <th align="center"> function ID <th align="center"> effort <th>role
- *   <tr> <td> \c feqInit() <td align="center"> 201 <td align="center"> --- <td> Initializes the support internal data structure;
- *   <tr> <td> \c feqTerm() <td align="center"> 202 <td align="center"> --- <td> Free and reset the support internal data structure;
- *   <tr> <td> \c feqPrint() <td align="center"> 203 <td align="center"> --- <td> Prints the internal state of the process event queue.
- *   <tr> <td> \c feqInsert() <td align="center"> 204 <td align="center"> --- <td> Inserts a new event in the queue, keeping the required order
- *   <tr> <td> \c feqPop() <td align="center"> 205 <td align="center"> --- <td> Returns the front event in the queue, removing it from the queue;
- *   <tr> <td> \c feqIsEmpty() <td align="center"> 206 <td align="center"> --- <td> Returns \c true if queue is empty and \c false otherwise;
+ *   <tr> <th> \c function <th align="center"> function ID <th align="center"> level <th>role
+ *   <tr> <td> \c feqInit() <td align="center"> 201 <td> \b 0 (trivial) <td> Initializes the support internal data structure;
+ *   <tr> <td> \c feqTerm() <td align="center"> 202 <td> \b 2 (low) <td> Free and reset the support internal data structure;
+ *   <tr> <td> \c feqPrint() <td align="center"> 203 <td> \b 3 (low medium) <td> Prints the internal state of the future event queue.
+ *   <tr> <td> \c feqInsert() <td align="center"> 204 <td> \b 4 (medium) <td> Inserts a new event in the queue, keeping the required order
+ *   <tr> <td> \c feqPop() <td align="center"> 205 <td> \b 2 (low) <td> Returns the front event in the queue, removing it from the queue;
+ *   <tr> <td> \c feqIsEmpty() <td align="center"> 206 <td> \b 1 (very low) <td> Returns \c true if queue is empty and \c false otherwise;
  *   </table>
  *
  *  \author Artur Pereira - 2023
@@ -67,20 +67,22 @@ extern FeqEventNode *feqHead;       ///< Pointer to head of list
 // ================================================================================== //
 
 /**
- * \brief Initializes the internal data structure
+ * \brief Initializes the internal data structure of the FEQ module
  * \details
- *  The module's internal data structure, defined in file \c feq.cpp, 
- *  should be initialized properly.<br>
- *  The following must be considered:
- *   - It can be assumed that the input file is syntactically and semantically correct
+ *   The module's internal data structure, defined in file \c frontend/feq.cpp, 
+ *   should be initialized properly.
  *
+ *   This is a quite trivial function.
  */
 void feqInit();
 
 // ================================================================================== //
 
 /**
- * \brief Free dynamic memory used by the module and reset supporting data structures
+ * \brief Reset the internal data structure of the FEQ module to the initial state
+ * \details
+ *   The dynamic memory used by the module's linked list must be released
+ *   and the supporting data structure reset to the initial state.
  */
 void feqTerm();
 
@@ -90,13 +92,13 @@ void feqTerm();
  * \brief Prints the internal state of the FEQ module
  * \details
  *  The current state of the future event queue (FEQ) must be
- *  printed to the given stream.<br>
+ *  printed to the given stream.
+ *
  *  The following must be considered:
+ *  - The linked-list elements should be printed in natural order.
  *  - The output must be the same as the one produced by the binary version.
  *  - In case of an error, an appropriate exception must be thrown.
  *  - All exceptions must be of the type defined in this project (Exception).
- *
- * \effort 0 (none)
  *
  * \param [in] fout File stream where to send output 
  */
@@ -105,9 +107,9 @@ void feqPrint(FILE *fout);
 // ================================================================================== //
 
 /**
- * \brief Inserts an entry in the queue
+ * \brief Add a new entry to the FEQ module
  * \details
- *  A new entry should be created and added to the process event queue.
+ *  A new entry should be created and added to the future event queue.
  *
  *  The following must be considered:
  *  - the list's elements should be sorted in ascending order of event time;
@@ -141,8 +143,7 @@ FutureEvent feqPop();
 /**
  * \brief Return the emptyness state of the queue
  * \details
- *  The following must be considered:
- *  - All exceptions must be of the type defined in this project (Exception).
+ *   This function should not fail.
  *
  * \return \c true if queue is empty and \c false otherwise
  */

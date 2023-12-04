@@ -61,7 +61,7 @@
  */
 enum ProcessState { 
     NEW,        ///< a process just arrived to the system
-    ACTIVE,    ///< the process is executing
+    ACTIVE,     ///< the process is executing
     SWAPPED,    ///< enough memory is not available yet, so process is waiting for space in swap area
     FINISHED,   ///< the process has already finished its execution
     DISCARDED   ///< the process has an address space bigger than the whole available main memory

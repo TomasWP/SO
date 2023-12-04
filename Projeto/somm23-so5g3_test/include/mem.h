@@ -43,16 +43,16 @@
  *   - an estimation of the effort required to implement it;
  *   - a brief description of the function role.
  *   <table>
- *   <tr> <th> \c function <th align="center"> function ID <th align="center"> effort <th>role
- *   <tr> <td> \c memInit() <td align="center"> 501 <td align="center"> --- <td> Initialize the internal data structure of the MEM module
- *   <tr> <td> \c memTerm() <td align="center"> 502 <td align="center"> --- <td> Free dynamic memory used by the allocation algorithm and reset supporting data structures
- *   <tr> <td> \c memPrint() <td align="center"> 503 <td align="center"> --- <td> Print the internal state of the memory management module
- *   <tr> <td> \c memAlloc() <td align="center"> 504 <td align="center"> --- <td> Try to allocate the address space profile of a process, using the active allocation policy
- *   <tr> <td> \c memFirstFitAlloc() <td align="center"> 505 <td align="center"> --- <td> Try to allocate a block of memory of the given size, using the first fit algorithm
- *   <tr> <td> \c memBuddySystemAlloc() <td align="center"> 506 <td align="center"> --- <td> Try to allocate a block of memory of the given size, using the buddy system algorithm
- *   <tr> <td> \c memFree() <td align="center"> 507 <td align="center"> --- <td> Free a previously allocated address space mapping
- *   <tr> <td> \c memFirstFitFree() <td align="center"> 508 <td align="center"> --- <td> Free a previously (first fit) allocated block of memory
- *   <tr> <td> \c memBuddySystemFree() <td align="center"> 509 <td align="center"> --- <td> Free a previously (buddy system) allocated block of memory
+ *   <tr> <th> \c function <th align="center"> function ID <th align="center"> level <th>role
+ *   <tr> <td> \c memInit() <td align="center"> 501 <td> 1 (very low) + 1 (very low) + 2 (low) <td> Initialize the internal data structure of the MEM module
+ *   <tr> <td> \c memTerm() <td align="center"> 502 <td> 1 (very low) + 1 (very low) + 2 (low) <td> Free dynamic memory used by the allocation algorithm and reset supporting data structures
+ *   <tr> <td> \c memPrint() <td align="center"> 503 <td> 1 (low) + 2 (low) + 3 (low medium) <td> Print the internal state of the memory management module
+ *   <tr> <td> \c memAlloc() <td align="center"> 504 <td> 5 (medium high) <td> Try to allocate the address space profile of a process, using the active allocation policy
+ *   <tr> <td> \c memFirstFitAlloc() <td align="center"> 505 <td> 6 (high) <td> Try to allocate a block of memory of the given size, using the first fit algorithm
+ *   <tr> <td> \c memBuddySystemAlloc() <td align="center"> 506 <td> 6 (high) <td> Try to allocate a block of memory of the given size, using the buddy system algorithm
+ *   <tr> <td> \c memFree() <td align="center"> 507 <td> 3 (low medium) <td> Free a previously allocated address space mapping
+ *   <tr> <td> \c memFirstFitFree() <td align="center"> 508 <td> 6 (high) <td> Free a previously (first fit) allocated block of memory
+ *   <tr> <td> \c memBuddySystemFree() <td align="center"> 509 <td> 6 (high) <td> Free a previously (buddy system) allocated block of memory
  *   </table>
  *
  *  \author Artur Pereira - 2023
@@ -112,10 +112,22 @@ struct MemListNode {
 // ================================================================================== //
 
 /**
+ * \brief Possible types of buddy system nodes
+ * \details
+ */
+enum MemTreeNodeType { 
+    FREE,       ///< represents a free block
+    OCCUPIED,   ///< represents a block assigned to a process
+    SPLITTED,   ///< represents a block that was splitted into two buddy blocks
+};
+
+// ================================================================================== //
+
+/**
  * \brief The node to support the binary tree used by the buddy system algorithm
  */
 struct MemTreeNode {
-    uint32_t nodeState;             ///< The state of the node: one of FREE, USED, SPLITTED
+    MemTreeNodeType state;      ///< The state of the node: one of FREE, OCCUPIED, SPLITTED
     MemBlock block;                 ///< A block o memory
     struct MemTreeNode *left;       ///< A pointer to the left side sub-tree
     struct MemTreeNode *right;      ///< A pointer to the right side sub-tree
@@ -125,26 +137,37 @@ struct MemTreeNode {
 
 extern MemParameters memParameters;     ///< Global memory management parameters
 
-extern MemListNode *memFreeHead;       ///< Head of the free list for first fit algorithm
-extern MemListNode *memOccupiedHead;   ///< Head of the occupied list for first fit algorithm
+extern MemListNode *memFreeHead;        ///< Head of the free list for first fit algorithm
+extern MemListNode *memOccupiedHead;    ///< Head of the occupied list for first fit algorithm
 
-extern MemTreeNode *memTreeRoot; ///< Root of the buddy system tree
+extern MemTreeNode *memTreeRoot;        ///< Root of the buddy system tree
 
 // ================================================================================== //
 
 /**
  * \brief Initialize the internal data structure of the MEM module
  * \details
- *  The module's internal data structure, defined in file \c mem.cpp, 
- *  should be initialized appropriately.<br>
+ *  The module's internal data structure, defined in file \c frontend/mem.cpp, 
+ *  should be initialized appropriately.
+ *  This data structure is composed of 4 variables:
+ *  - \c memParameters, which holds global parameters;
+ *  - \c memFreeHead and \c memOccupiedHead, which are the supporting variables for the first fit allocation policy,
+ *    corresponding to two double linked-lists, 
+ *    one for free blocks and another to blocks in used by processes;
+ *  - \c memTreeRoot, which is the supporting variable for the buddy system allocation policy,
+ *    corresponding to a binary tree, whose leaves represent both free and in-used blocks.
+ *
  *  The following must be considered:
+ *  - If policy is \c FirstFit, \c memTreeRoot must be put at NULL and \c memFreeHead and
+ *    \c memOccupiedHead must be initialized properly.
+ *  - If policy is \c BuddySystem, \c memFreeHead and \c memOccupiedHead must be put at NULL and
+ *    \c memTreeRoot must be initialized properly.
+ *  - The operating system should occupy the lower part of the available main memory.
  *  - In case of an error, an appropriate exception must be thrown.
  *  - All exceptions must be of the type defined in this project (Exception).
  *
- * \effort 2 (low)
- *
- * \param [in] memSize Total amount of memory, in chunks, available
- * \param [in] memSizeOS The amount of memory used by the operating system, in chunks
+ * \param [in] memSize Total amount of memory, in bytes, available
+ * \param [in] memSizeOS The amount of memory used by the operating system, in bytes
  * \param [in] chunkSize The unit of allocation, in bytes
  * \param [in] policy The allocation policy to be used
  */
@@ -153,26 +176,34 @@ void memInit(uint32_t memSize, uint32_t memSizeOS, uint32_t chunkSize, Allocatio
 // ================================================================================== //
 
 /**
- * \brief Free dynamic memory used by the allocation algorithm and reset supporting data structures
+ * \brief Reset the internal data structure of the MEM module to the initial state
+ * \details
+ *   The dynamic memory used by the module's linked lists or binary tree must be released
+ *   and the supporting data structure reset to the initial state.
  */
 void memTerm();
 
 // ================================================================================== //
 
 /**
- * \brief Print the internal state of the memory management module
+ * \brief Print the internal state of the MEM module
  * \details
- *  The current state of the list of free and of the list of occupied blocks
- *  (module MEM) must be
- *  printed to the given file.<br>
+ *  Two tables must be printed to the given file stream, 
+ *  one containing the free blocks and the other the occupied blocks:
+ *  - If the active policy is the first fit allocation, 
+ *    the first table corresponds to the linked-list of free blocks,
+ *    while the second one corresponds to the linked list of occupied blocks.
+ *  - If the active policy is buddy system allocation,
+ *    the binary tree must be traversed twice, one to print the free blocks
+ *    and another to print the occupied blocks.
+ *
  *  The following must be considered:
- *  - For each list, the printing must be done in ascending order of block address.
+ *  - For the first fit policy, the linked-lists must be printed in natural order
+ *  - For the buddy system policy, the binary tree must be travered in a depth-first approach
+ *  - In both cases, the printing must appear in ascending order of block addresses.
  *  - The output must be the same as the one produced by the binary version.
- *  - If print mode is NEW, print to a new file (zapping if necessary).
- *  - If print mode is APPEND, append printing to the end of the file.
  *  - In case of an error, an appropriate exception must be thrown.
  *  - All exceptions must be of the type defined in this project (Exception).
- * \remarks See the result of the binary version, to replicate its behavior
  *
  * \param [in] fout File stream where to send output 
  */
@@ -181,22 +212,29 @@ void memPrint(FILE *fout);
 // ================================================================================== //
 
 /**
- * \brief Try to allocate the address space profile of a process, using the active allocation policy
+ * \brief Try to allocate the address space profile of a process
  * \details
- *  This is the front end allocation function.
+ *  This is the front end allocation function, that uses the \c memFirstFitAlloc or
+ *  \c memBuddySystemAlloc, depending on the active allocation policy
+ *
  *  The following must be considered:
+ *  - Each segment size must be rounded up to the smallest multiple of the chunk size.
  *  - For each segment of the given profile, following the profile order,
- *    the active block allocation function must be called,
+ *    the appropriate block allocation function must be called,
  *    in order to fill an address space mapping.
  *  - If one of the segments fail to be allocated, the function should free the previously
- *    allocated blocks, before return NULL.
+ *    allocated blocks, before return NO_MAPPING.
  *  - If the memory required to allocate the whole address space exceds the total memory for
- *    processes, (void*)(-1) should be returned.
- *  - Each segment size must be rounded up to the smallest multiple of the chunk size.
- *
+ *    processes, IMPOSSIBLE_MAPPING should be returned.<br>
+ *    Note that the memory required depends on the allocation policy:
+ *    - for the \c FirstFit policy, every allocated block has a size equal to the rounded up size
+ *      of its corresponding segment;
+ *    - for the \c BuddySystem policy, the allocated block may be bigger than the rounded up
+ *      size, because of the division into halves.
+ *    
  * \param [in] pid PID of the process requesting memory
  * \param [in] profile Pointer to a variable containing the process' address space profile
- * \return a valid pointer if succeed; 0 if not enough available memory at the moment; -1 if impossíble
+ * \return a valid pointer if succeed; NULL_ADDRESS if not enough available memory at the moment; IMPOSSIBLE_MAPPING if impossíble
  */
 AddressSpaceMapping *memAlloc(uint32_t pid, AddressSpaceProfile *profile);
 
@@ -206,8 +244,13 @@ AddressSpaceMapping *memAlloc(uint32_t pid, AddressSpaceProfile *profile);
  * \brief Try to allocate a block of memory of the given size, using the first fit algorithm
  * \details
  *  This function may assume that the given size was already rounded up by the 
- *  front end allocation function.<br>
+ *  front end allocation function.
+ *
  *  The following must be considered:
+ *  - Both linked-lists must be kept in ascending order of block addresses
+ *  - The first free block, big enough to accommodate the requested size, must be used.
+ *  - When a free block is splitted, the lower sub-block should be used for the allocation,
+ *    and the upper sub-block should remain free.
  *  - In case of an error, an appropriate exception must be thrown.
  *  - All exceptions must be of the type defined in this project (Exception).
  *
@@ -222,9 +265,21 @@ Address memFirstFitAlloc(uint32_t pid, uint32_t size);
 /**
  * \brief Try to allocate a block of memory of the given size, using the buddy system algorithm
  * \details
+ *  The buddy system allocation policy makes use of splitting memory into halves to try to give a best fit.
+ *  It rilies on a binary tree to represents the state of the memory. 
+ *  In this tree, leaf-nodes represent free and occupied blocks, while branch-nodes represent
+ *  blocks that were splitted.
+ *
  *  This function may assume that the given size was already rounded up by the 
- *  front end allocation function.<br>
+ *  front end allocation function.
+ *
  *  The following must be considered:
+ *  - The leaf-nodes, when seen from left to right, represent blocks, free or occupied,
+ *    appearing in ascending order of block addresses.
+ *  - The first, best fit free block, according to a left-right, depth-first search, must be used.
+ *  - The previous block, may have to be splitted, in acordance with the buddy system approach.
+ *  - When a free block is splitted, the lower sub-block should be used for the allocation,
+ *    and the upper sub-block should remain free.
  *  - In case of an error, an appropriate exception must be thrown.
  *  - All exceptions must be of the type defined in this project (Exception).
  *
@@ -239,7 +294,9 @@ Address memBuddySystemAlloc(uint32_t pid, uint32_t size);
 /**
  * \brief Free a previously allocated address space mapping
  * \details
- *  All blocks of the mapping must be free, using the active allocation policy.
+ *  This is the front end free function, that uses the \c memFirstFitFree or
+ *  \c memBuddySystemFree, depending on the active allocation policy,
+ *  to free all blocks of the given mapping.
  *
  *  The following must be considered:
  *  - In case of an error, an appropriate exception must be thrown.
@@ -255,8 +312,9 @@ void memFree(AddressSpaceMapping *mapping);
  * \brief Free a previously allocated (first fit) block of memory
  * \details
  *
- *  If the block to be freed is contiguous to an empty block, merging must take place.
  *  The following must be considered:
+ *  - If the block to be freed is contiguous to an empty block, merging must take place.
+ *  - If address is not valid, the EINVAL exceptions must be thrown.
  *  - In case of an error, an appropriate exception must be thrown.
  *  - All exceptions must be of the type defined in this project (Exception).
  *
@@ -270,8 +328,9 @@ void memFirstFitFree(Address address);
  * \brief Free a previously allocated (buddy system) block of memory
  * \details
  *
- *  If the block to be freed is contiguous to an empty block, merging must take place.
  *  The following must be considered:
+ *  - If the block to be freed is contiguous to an empty block, merging must take place.
+ *  - If address is not valid, the EINVAL exceptions must be thrown.
  *  - In case of an error, an appropriate exception must be thrown.
  *  - All exceptions must be of the type defined in this project (Exception).
  *

@@ -29,18 +29,22 @@
  *   that was already defined above.
  *   The list should be kept sorted in ascending order of the PID.
  *   
- *   The interface of this module is predefined, being composed of the following functions:
+ *   The following table presents a list of the functions in this module, including:
+ *   - the function name;
+ *   - the function ID, that can be used to switch between the binary and group version;
+ *   - an estimation of the effort required to implement it;
+ *   - a brief description of the function role.
  *   <table>
- *   <tr><th>\c function <th align="center"> function ID <th align="center"> effort <th>role
- *   <tr><td>\c pctInit() <td align="center"> 301 <td align="center"> --- <td> Initialize the support internal data structure
- *   <tr><td>\c pctTerm() <td align="center"> 302 <td align="center"> --- <td> Free and reset the support internal data structure
- *   <tr><td>\c pctPrint() <td align="center"> 303 <td align="center"> --- <td> Print the internal state of the PCT table
- *   <tr><td>\c pctInsert() <td align="center"> 304 <td align="center"> --- <td> Insert a new entry in the PCT table
- *   <tr><td>\c pctGetLifetime() <td align="center"> 305 <td align="center"> --- <td> Return the time of execution of a process
- *   <tr><td>\c pctGetAddressSpaceProfile() <td align="center"> 306 <td align="center"> --- <td> Return the list of address space segments of the given process
- *   <tr><td>\c pctGetAddressSpaceMapping() <td align="center"> 307 <td align="center"> --- <td> Return the list of memory blocks where the process was allocated 
- *   <tr><td>\c pctGetStateAsString() <td align="center"> 308 <td align="center"> --- <td> Return the state as a string. given the state
- *   <tr><td>\c pctUpdateState() <td align="center"> 309 <td align="center"> --- <td> Sets the state of a process
+ *   <tr><th>\c function <th align="center"> function ID <th align="center"> level <th>role
+ *   <tr><td>\c pctInit() <td align="center"> 301 <td> 0 (trivial) <td> Initialize the support internal data structure
+ *   <tr><td>\c pctTerm() <td align="center"> 302 <td> 2 (low) <td> Free and reset the support internal data structure
+ *   <tr><td>\c pctPrint() <td align="center"> 303 <td> 4 (medium) <td> Print the internal state of the PCT table
+ *   <tr><td>\c pctInsert() <td align="center"> 304 <td> 3 (low medium) <td> Insert a new entry in the PCT table
+ *   <tr><td>\c pctGetLifetime() <td align="center"> 305 <td> 1 (very low) <td> Return the time of execution of a process
+ *   <tr><td>\c pctGetAddressSpaceProfile() <td align="center"> 306 <td> 1 (very low) <td> Return the list of address space segments of the given process
+ *   <tr><td>\c pctGetAddressSpaceMapping() <td align="center"> 307 <td> 1 (very low) <td> Return the list of memory blocks where the process was allocated 
+ *   <tr><td>\c pctGetStateAsString() <td align="center"> 308 <td> 1 (very low) <td> Return the state as a string. given the state
+ *   <tr><td>\c pctUpdateState() <td align="center"> 309 <td> 3 (low medium) <td> Sets the state of a process
  *   </table>
  *
  *  \author Artur Pereira - 2023
@@ -75,16 +79,6 @@ struct PctBlock {
 // ================================================================================== //
 
 /**
- * \brief The Process Control Table data structure
- */
-//struct PctTable {
-//    uint32_t processCount;              ///< Number of processes in the table
-//    PctBlock process[MAX_PROCESSES];    ///< The table container
-//};
-
-// ================================================================================== //
-
-/**
  * \brief Node for the Process Control Table
  */
 struct PctNode {
@@ -94,30 +88,27 @@ struct PctNode {
 
 // ================================================================================== //
 
-//extern PctTable pctTable;   ///< The process control table
-
-// ================================================================================== //
-
 extern PctNode *pctHead;    ///< Pointer to head of list 
 
 // ================================================================================== //
 
 /**
- * \brief Initialize the internal data structure
+ * \brief Initializes the internal data structure of the PCT module
  * \details
- *  The module's internal data structure, defined in file \c pct.cpp, 
- *  should be initialized appropriately.<br>
- *  The following must be considered:
- *     
- * \effort 0 (none)
+ *   The module's internal data structure, defined in file \c frontend/pct.cpp, 
+ *   should be initialized properly
  *
+ *   This is a quite trivial function.
  */
 void pctInit();
 
 // ================================================================================== //
 
 /**
- * \brief Free dynamic memory used by the module and reset supporting data structures
+ * \brief Reset the internal data structure of the PCT module to the initial state
+ * \details
+ *   The dynamic memory used by the module's linked list must be released
+ *   and the supporting data structure reset to the initial state.
  */
 void pctTerm();
 
@@ -127,9 +118,10 @@ void pctTerm();
  * \brief Print the internal state of the PCT module
  * \details
  *  The current state of the process control table (PCT) must be
- *  printed to the given file stream.<br>
+ *  printed to the given file stream.
+ *
  *  The following must be considered:
- *  - The printing must be done ...
+ *  - The linked-list elements should be printed in natural order.
  *  - The output must be the same as the one produced by the binary version.
  *  - In case of an error, an appropriate exception must be thrown.
  *  - All exceptions must be of the type defined in this project (Exception).
@@ -143,10 +135,11 @@ void pctPrint(FILE *fout);
 /**
  * \brief Add a new entry to the PCT table
  * \details
- *  The first empty entry of the table should be properly filled.
+ *  A new entry should be created and added to the linked-list that implements 
+ *  the process control table.
  *
  *  The following must be considered:
- *  - nodes should be kept sorted in ascending order of the PID
+ *  - the list's elements should be sorted in ascending order of the PID;
  *  - field \c state should be put at \c NEW
  *  - Field \c activationTime should be put at \c NO_TIME
  *  - Field \c finishTime should be put at \c NO_TIME
@@ -178,7 +171,7 @@ uint32_t pctGetLifetime(uint32_t pid);
 // ================================================================================== //
 
 /**
- * \brief Get process address space size
+ * \brief Get apointer to the process' address space profile
  * \details
  *  The following must be considered:
  *  - The \c EINVAL exception should be thrown, if an entry for the given pid does not exist.
@@ -192,7 +185,7 @@ AddressSpaceProfile *pctGetAddressSpaceProfile(uint32_t pid);
 // ================================================================================== //
 
 /**
- * \brief Get process execution memory address
+ * \brief Get a pointer to the process' memory space mapping
  * \details
  *  The following must be considered:
  *  - The \c EINVAL exception should be thrown, if an entry for the given pid does not exist.
@@ -206,7 +199,7 @@ AddressSpaceMapping *pctGetAddressSpaceMapping(uint32_t pid);
 // ================================================================================== //
 
 /**
- * \brief Return the process state as a C-string (const char*)
+ * \brief Return the process' state as a C-string (const char*)
  * \details
  *  The following must be considered:
  *  - The \c EINVAL exception should be thrown, if an entry for the given pid does not exist.
@@ -220,19 +213,23 @@ const char *pctGetStateAsString(uint32_t pid);
 // ================================================================================== //
 
 /**
- * \brief Set process state
+ * \brief Update process state
  * \details
- *  The following must be considered:
- *  - If state is ACTIVE, time is the start time
- *  - If state is FINISHED, time is the finish time
- *  - If state is SWAPPED or DISCARDED, time is irrelevant
- *  - The \c EINVAL exception should be thrown, if an entry for the given pid does not exist.
- *  - All exceptions must be of the type defined in this project (Exception).
+ *   Update the data of the given process.
+ *   Fields to be updated depend on the new state of the process.
+ *
+ *   The following must be considered:
+ *   - If the new state is ACTIVE, \c time refers to the activation time
+ *   - If the new state is FINISHED, \c time refers to the finish time
+ *   - If the new state is SWAPPED or DISCARDED, \c time is irrelevant
+ *   - Argument \c mapping only applies when new state is ACTIVE
+ *   - The \c EINVAL exception should be thrown, if an entry for the given pid does not exist.
+ *   - All exceptions must be of the type defined in this project (Exception).
  *  
  * \param [in] pid PID of the process
  * \param [in] state The process new state
  * \param [in] time The time associated to the change of state
- * \param [in] mapping The mappinf, if state is ACTIVE
+ * \param [in] mapping Pointer to the mappinf, if state is ACTIVE
  */
 void pctUpdateState(uint32_t pid, ProcessState state, uint32_t time = NO_TIME, AddressSpaceMapping *mapping = NULL);
 
