@@ -269,6 +269,7 @@ int main(int argc, char *argv[])
     asp3->segmentCount = 2;
     asp3->size[0] = 0x3000;
     swpAdd(5, asp3);
+    memTerm();
     simPrint(fout); pctPrint(fout); feqPrint(fout); swpPrint(fout); memPrint(fout);
 }
 
