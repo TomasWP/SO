@@ -28,7 +28,7 @@ namespace group
         new_node->event.pid = pid;
         new_node->next = NULL;
 
-        if (feqHead == NULL || feqHead->event.time > time || (feqHead->event.time == time && type == TERMINATE))
+        if (feqHead == NULL || feqHead->event.time > time || (feqHead->event.time == time && feqHead->event.type != type))
         {
             new_node->next = feqHead;
             feqHead = new_node;

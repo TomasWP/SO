@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  \author: Tomás Sousa Fonseca 107245
  */
 
 #include "somm23.h"
@@ -15,10 +15,11 @@ namespace group
     {
         soProbe(507, "%s(mapping: %p)\n", __func__, mapping);
 
-        require(mapping != NULL, "mapping must be a valid pointer to a AddressSpaceMapping");
-
-        /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        if (memParameters.policy == FirstFit) {
+            memFirstFitFree(*mapping); 
+        } else {
+            memBuddySystemFree(*mapping); 
+        }
     }
 
 // ================================================================================== //

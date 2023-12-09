@@ -4,16 +4,17 @@
 
 #include "somm23.h"
 
-namespace group 
+namespace group
 {
 
-// ================================================================================== //
+    // ================================================================================== //
 
-    void simTerm() 
+    void simTerm()
     {
         soProbe(102, "%s()\n", __func__);
 
         /* TODO POINT: Replace next instruction with your code */
+
         memTerm();
         swpTerm();
         pctTerm();
@@ -22,7 +23,6 @@ namespace group
         forthcomingTable.count = 0;
     }
 
-// ================================================================================== //
+    // ================================================================================== //
 
 } // end of namespace group
-

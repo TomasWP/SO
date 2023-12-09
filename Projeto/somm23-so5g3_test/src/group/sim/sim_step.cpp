@@ -51,9 +51,10 @@ namespace group
             uint32_t i = 0;
             uint32_t lifetime;
             SwappedProcess *swpProc = swpPeek(0);
-            while(swpProc != NULL){
+            while (swpProc != NULL)
+            {
                 AddressSpaceMapping *swpAddressSpaceMap = memAlloc(swpProc->pid, &(swpProc->profile));
-                // Remove and continue processing the same index
+
                 if (swpAddressSpaceMap != NULL_ADDRESS)
                 {
                     lifetime = pctGetLifetime(swpProc->pid);
@@ -62,13 +63,11 @@ namespace group
                     swpRemove(i);
                     swpProc = swpPeek(i);
                 }
-                // Go to next index
                 else
                 {
                     swpProc = swpPeek(++i);
                 }
             }
-
         }
 
         simTime = event.time;

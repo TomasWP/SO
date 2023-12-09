@@ -11,18 +11,9 @@ namespace group
 
     // ================================================================================== //
 
-    int validPID(uint32_t genPID)
-    {
-        uint32_t i;
-        for (i = 0; i < forthcomingTable.count; i++)
-        {
-            if (forthcomingTable.process[i].pid == genPID)
-            {
-                return 0;
-            }
-        }
-        return 1;
-    }
+    static int validPID(uint32_t genPID);
+
+    // ================================================================================== //
 
     void simRandomFill(uint32_t n, uint32_t seed)
     {
@@ -62,7 +53,6 @@ namespace group
             uint32_t j;
             for (j = 0; j < forthcomingTable.process[i].addressSpace.segmentCount; j++)
             {
-        
                 forthcomingTable.process[i].addressSpace.size[j] = (rand() % 0x701) + 0x100;
             }
 
@@ -70,6 +60,21 @@ namespace group
 
             feqInsert(ARRIVAL, forthcomingTable.process[i].lifetime, forthcomingTable.process[i].pid);
         }
+    }
+
+    // ================================================================================== //
+
+    int validPID(uint32_t genPID)
+    {
+        uint32_t i;
+        for (i = 0; i < forthcomingTable.count; i++)
+        {
+            if (forthcomingTable.process[i].pid == genPID)
+            {
+                return 0;
+            }
+        }
+        return 1;
     }
 
     // ================================================================================== //

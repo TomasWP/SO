@@ -21,8 +21,6 @@ namespace group
 
         MemTreeNode* node = findNode(memTreeRoot, address);
         
-        printf("Delete node -> %p  |  Address -> %#x  |  State -> %u\n", node, node->block.address, node->state);
-
         if (node != NULL && node->state == OCCUPIED){
             node->state = FREE;
             mergeBlocks(memTreeRoot);

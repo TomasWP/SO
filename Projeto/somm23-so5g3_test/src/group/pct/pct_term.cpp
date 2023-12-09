@@ -1,5 +1,5 @@
 /*
- *  \author Diogo Borges
+ *  \author Diogo Borges - 102954
  */
 
 #include "somm23.h"

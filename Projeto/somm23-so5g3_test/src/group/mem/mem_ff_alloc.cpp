@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  BEATRIZ FERREIRA 107214
  */
 
 #include "somm23.h"
@@ -19,10 +19,36 @@ namespace group
         require(size, "the size of a memory segment must be greater then zero");
 
         /* TODO POINT: Replace next instruction with your code */
-        throw Exception(ENOSYS, __func__);
+        MemListNode* currentNode = memFreeHead;
+        while (currentNode != NULL) {
+            if (currentNode->block.size >= size) {
+                currentNode->block.pid = pid;
+
+                if (currentNode->block.size > size) {
+                    MemListNode* newFreeBlock = new MemListNode();
+                    newFreeBlock->block.pid = 0;
+                    newFreeBlock->block.size = currentNode->block.size - size;
+                    newFreeBlock->block.address = currentNode->block.address + size;
+
+                    newFreeBlock->next = currentNode->next;
+                    newFreeBlock->prev = currentNode;
+                    currentNode->next = newFreeBlock;
+
+                    if (newFreeBlock->next != NULL) {
+                        newFreeBlock->next->prev = newFreeBlock;
+                    }
+                }
+
+                return currentNode->block.address;
+            }
+
+            currentNode = currentNode->next;
+        }
+
+        throw Exception(ENOMEM, __func__);
     }
 
 // ================================================================================== //
 
-} // end of namespace group
+}  // end of namespace group
 
