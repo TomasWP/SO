@@ -83,5 +83,4 @@ group/sim/CMakeFiles/sim.dir/sim_load.cpp.o: \
  /home/tomas/SO/Projeto/somm23-so5g3_test/include/feq.h \
  /home/tomas/SO/Projeto/somm23-so5g3_test/include/swp.h \
  /home/tomas/SO/Projeto/somm23-so5g3_test/include/mem.h \
- /home/tomas/SO/Projeto/somm23-so5g3_test/include/sim.h \
- /usr/include/string.h /usr/include/strings.h
+ /home/tomas/SO/Projeto/somm23-so5g3_test/include/sim.h

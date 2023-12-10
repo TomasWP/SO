@@ -182,6 +182,7 @@ void soProbe(uint32_t id, const char *fmt, ...)
     va_start(ap, fmt);
     vfprintf(fp, fmt, ap);
     va_end(ap);
+    fflush(fp);
 }
 
 // ================================================================================== //
@@ -198,6 +199,7 @@ void soProbe(const char *color, uint32_t id, const char *fmt, ...)
     va_start(ap, fmt);
     vfprintf(fp, fmt, ap);
     va_end(ap);
+    fflush(fp);
 }
 
 // ================================================================================== //

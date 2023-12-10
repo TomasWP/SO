@@ -389,8 +389,6 @@ group/sim/CMakeFiles/sim.dir/sim_load.cpp.o: /home/tomas/SO/Projeto/somm23-so5g3
   /usr/include/stdint.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
-  /usr/include/string.h \
-  /usr/include/strings.h \
   /usr/include/x86_64-linux-gnu/asm/errno.h \
   /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
   /usr/include/x86_64-linux-gnu/bits/byteswap.h \
@@ -851,8 +849,6 @@ group/sim/CMakeFiles/sim.dir/sim_term.cpp.o: /home/tomas/SO/Projeto/somm23-so5g3
 
 /home/tomas/SO/Projeto/somm23-so5g3_test/src/group/sim/sim_step.cpp:
 
-/usr/include/string.h:
-
 /home/tomas/SO/Projeto/somm23-so5g3_test/src/group/sim/sim_load.cpp:
 
 /home/tomas/SO/Projeto/somm23-so5g3_test/src/group/sim/sim_init.cpp:
@@ -1132,8 +1128,6 @@ group/sim/CMakeFiles/sim.dir/sim_term.cpp.o: /home/tomas/SO/Projeto/somm23-so5g3
 /usr/include/unistd.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
-
-/usr/include/strings.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
 

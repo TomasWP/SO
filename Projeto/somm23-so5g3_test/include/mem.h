@@ -234,7 +234,9 @@ void memPrint(FILE *fout);
  *    
  * \param [in] pid PID of the process requesting memory
  * \param [in] profile Pointer to a variable containing the process' address space profile
- * \return a valid pointer if succeed; NULL_ADDRESS if not enough available memory at the moment; IMPOSSIBLE_MAPPING if impossíble
+ * \return a valid pointer if succeed; 
+ *   NO_MAPPING if not enough available memory at the moment; 
+ *   IMPOSSIBLE_MAPPING if the memory requested is bigger then the whole memory available.
  */
 AddressSpaceMapping *memAlloc(uint32_t pid, AddressSpaceProfile *profile);
 
@@ -256,7 +258,7 @@ AddressSpaceMapping *memAlloc(uint32_t pid, AddressSpaceProfile *profile);
  *
  * \param [in] pid PID of the process requesting memory
  * \param [in] size Size of the block to be allocated, in bytes
- * \return The start address of the block allocated
+ * \return The start address of the block allocated or \c NULL_ADDRESS if no block was found
  */
 Address memFirstFitAlloc(uint32_t pid, uint32_t size);
 
@@ -285,7 +287,7 @@ Address memFirstFitAlloc(uint32_t pid, uint32_t size);
  *
  * \param [in] pid PID of the process requesting memory
  * \param [in] size Size of the block to be allocated, in bytes
- * \return The start address of the block allocated
+ * \return The start address of the block allocated or \c NULL_ADDRESS if no block was found
  */
 Address memBuddySystemAlloc(uint32_t pid, uint32_t size);
 
