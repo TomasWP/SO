@@ -26,19 +26,56 @@ namespace group
             memParameters.totalSize = mSize;
             memParameters.kernelSize= osSize;
             memParameters.policy    = policy;
-            memFreeHead = NULL;
-            memOccupiedHead = NULL;
-            memTreeRoot = NULL;
 
             if (policy == FirstFit) 
             {
-                memFreeHead = NULL;
+                // Allocate memory for the new MemBlock
+                MemBlock* newBlock = new MemBlock;
+                newBlock->pid = 0; // 0 indicates the block is free
+                newBlock->size = mSize - osSize;
+                newBlock->address = osSize; // The start address of the block is right after the OS
+
+                // Allocate memory for the new MemListNode and set its block field to the new MemBlock
+                MemListNode* newNode = new MemListNode;
+                newNode->block = *newBlock;
+                newNode->prev = NULL;
+                newNode->next = NULL;
+
+                // If memFreeHead is NULL, then the list is empty, so set memFreeHead to the new node
+                if (memFreeHead == NULL) {
+                    memFreeHead = newNode;
+                }
+                else {
+                    // Otherwise, add the new node to the start of the list
+                    newNode->next = memFreeHead;
+                    memFreeHead->prev = newNode;
+                    memFreeHead = newNode;
+                }
+
+                // Initialize the head of the occupied list to NULL as no blocks are allocated yet
                 memOccupiedHead = NULL;
-                
             }
             else if (policy == BuddySystem) 
             {
-                memTreeRoot = NULL;
+                // Set the free and occupied lists to NULL
+                memFreeHead = NULL;
+                memOccupiedHead = NULL;
+
+                // Allocate memory for the new MemBlock
+                MemBlock* newBlock = new MemBlock;
+                newBlock->pid = 0; // 0 indicates the block is free
+                newBlock->size = mSize - osSize;
+                newBlock->address = osSize; // The start address of the block is right after the OS
+
+                // Allocate memory for the new MemTreeNode and set its block field to the new MemBlock
+                MemTreeNode* newNode = new MemTreeNode;
+                newNode->block = *newBlock;
+                newNode->left = NULL;
+                newNode->right = NULL;
+                newNode->state = FREE;
+
+                memTreeRoot = newNode;
+
             }
         } catch (const Exception& e) {
             throw e;
