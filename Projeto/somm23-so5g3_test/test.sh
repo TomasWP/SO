@@ -1,6 +1,11 @@
 #!/bin/bash
 #
+#
+#  author Paulo Macedo 
+# 
+#
 # Function to generate random numbers
+
 generate_random() {
     min=$1
     max=$2
@@ -90,8 +95,11 @@ generate_content() {
                 echo "$spaces%" 
             fi
         fi
-
-        arrival=$((arrival + $(generate_random 0 100)))
+        
+        # ~= 1/3 probability of giving the same arrival time else generates new arrival time
+        if [ "$random" -gt 7 ]; then
+            arrival=$((arrival + $(generate_random 0 100)))
+        fi
     done
 
     echo ""
@@ -102,7 +110,7 @@ random_sim_file(){
     generate_content > "./examples/randomsim.txt"
 
     if [ $? -eq 0 ]; then
-        echo -e "\e[33m Simulation file created at /examples/random.txt.\e[0m" 
+        echo -e "\e[33m Simulation file created at /examples/randomsim.txt.\e[0m" 
     else
         echo -e "\e[31m Error while creating simulation file !\e[0m"
         exit 1
@@ -131,16 +139,7 @@ compileCode(){
 
 # Executes two binary versions and sends output to a file
 run_versions(){
-    ./bin/main -b -i ./examples/randomsim.txt $1 -o ./examples/myOutput.txt
-
-    if [ $? -eq 0 ]; then
-        echo -e "\e[32m myOutput.txt created. \e[0m" 
-    else
-        echo -e "\e[31m Failed when creating the myOutput.txt !\e[0m" 
-        exit 1
-    fi
-
-    ./bin/main -b -i ./examples/randomsim.txt $2 -o ./examples/correctOutput.txt
+    timeout 4s ./bin/main -b -i ./examples/randomsim.txt $2 -o ./examples/correctOutput.txt
 
     if [ $? -eq 0 ]; then
         echo -e "\e[32m correctOutput.txt created. \e[0m"
@@ -149,6 +148,14 @@ run_versions(){
         exit 1
     fi
 
+    timeout 4s ./bin/main -b -i ./examples/randomsim.txt $1 -o ./examples/myOutput.txt
+
+    if [ $? -eq 0 ]; then
+        echo -e "\e[32m myOutput.txt created. \e[0m" 
+    else
+        echo -e "\e[31m Failed when creating the myOutput.txt !\e[0m" 
+        exit 1
+    fi
 }
 
 # Using different methods to compare files says if files are equal
@@ -199,19 +206,19 @@ main(){
     while getopts ":c:m:s:k:r:bh" opt; do
         case $opt in
             s)  n_simulations=$OPTARG ;;
-            c)  args1="${args1} -c ${OPTARG}"
-                args2="${args2} -c ${OPTARG}"
+            c)  args1="${args1}-c ${OPTARG} "
+                args2="${args2}-c ${OPTARG} "
                 ;;
-            m)  args1="${args1} -m ${OPTARG}" 
-                args2="${args2} -m ${OPTARG}" 
+            m)  args1="${args1}-m ${OPTARG} " 
+                args2="${args2}-m ${OPTARG} " 
                 ;;
-            k)  args1="${args1} -k ${OPTARG}"
-                args2="${args2} -k ${OPTARG}"
+            k)  args1="${args1}-k ${OPTARG} "
+                args2="${args2}-k ${OPTARG} "
                 ;;
-            r)  args1="${args1} -r ${OPTARG}" 
+            r)  args1="${args1}-r ${OPTARG} " 
                 ;;
-            b)  args1="${args1} -f b"
-                args2="${args2} -f b"
+            b)  args1="${args1}-f b "
+                args2="${args2}-f b "
                 ;;
             h) display_help
                exit 0;;
@@ -222,9 +229,6 @@ main(){
         esac
     done
     
-    echo $args2
-    echo $args1
-
     compileCode
     echo ""
 
