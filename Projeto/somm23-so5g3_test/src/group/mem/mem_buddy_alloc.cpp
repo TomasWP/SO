@@ -13,7 +13,7 @@ namespace group
 
 // ================================================================================== //
 
-    Address getAddress(uint32_t pid, MemTreeNode* memTreeRoot, uint32_t block_size);
+    static Address getAddress(uint32_t pid, MemTreeNode* memTreeRoot, uint32_t block_size);
 
     Address memBuddySystemAlloc(uint32_t pid, uint32_t size)
     {
@@ -22,14 +22,10 @@ namespace group
         require(pid > 0, "a valid process ID must be greater than zero");
         require(size, "the size of a memory segment must be greater then zero");
  
-        uint32_t block_size = 0x1;
-        while (block_size < size)
-            block_size <<= 1; 
-
         if (memTreeRoot == NULL)
             throw Exception(EINVAL, __func__);
 
-        return getAddress(pid, memTreeRoot, block_size);
+        return getAddress(pid, memTreeRoot, size);
     }
 
     Address getAddress(uint32_t pid, MemTreeNode* currentNode, uint32_t block_size)

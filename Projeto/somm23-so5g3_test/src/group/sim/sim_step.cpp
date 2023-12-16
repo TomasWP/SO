@@ -28,9 +28,9 @@ namespace group
             AddressSpaceMapping *addressSpaceMap = memAlloc(event.pid, &(proc->addressSpace));
             if (addressSpaceMap == IMPOSSIBLE_MAPPING)
             {
-                throw Exception(EINVAL, __func__);
+                pctUpdateState(event.pid, DISCARDED, NO_TIME, addressSpaceMap);
             }
-            if (addressSpaceMap == NULL_ADDRESS)
+            else if (addressSpaceMap == NULL_ADDRESS)
             {
                 swpAdd(event.pid, &(proc->addressSpace));
                 pctUpdateState(event.pid, SWAPPED, event.time, addressSpaceMap);

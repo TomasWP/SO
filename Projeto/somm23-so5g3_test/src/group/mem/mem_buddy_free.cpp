@@ -10,8 +10,8 @@
 namespace group 
 {
 
-    MemTreeNode* findNode(MemTreeNode* node, Address address); 
-    void mergeBlocks(MemTreeNode* root);
+    static MemTreeNode* findNode(MemTreeNode* node, Address address); 
+    static void mergeBlocks(MemTreeNode* root);
 
 // ================================================================================== //
 
