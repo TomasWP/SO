@@ -253,14 +253,33 @@ int main(int argc, char *argv[])
 
     fprintf(fout, "\n\e[34;1mStarting simulation\e[0m\n\n");
     simInit(memSize, osSize, chunkSize, memPolicy);
-    if (infile != NULL)
-    {
-        simLoad(infile);
-    }
-    simPrint(fout); pctPrint(fout); feqPrint(fout); swpPrint(fout); memPrint(fout);
+    //if (infile != NULL)
+    //{
+    //    simLoad(infile);
+    //}
+    //simPrint(fout); pctPrint(fout); feqPrint(fout); swpPrint(fout); memPrint(fout);
 
     /* put your testing code here */
+    if (infile != NULL){
+        simLoad(infile);
+        while(simStep()){
+            simPrint(fout);
+            pctPrint(fout);
+            feqPrint(fout);
+            swpPrint(fout);
+            memPrint(fout);
+        }
+    }
 
+    //TEST OPTIONS:
+    //-s simulations --- number of simulation tests (default: 3)
+    //-c size        --- chunk size (default: 256 or 0x100)
+    //-m size        --- total memory size, in bytes, (default: 1048576 or 0x100000)
+    //-k address     --- memory size, in bytes, used by (kernel) OS (default: 65536 or 0x10000)
+    //-r num-num     --- remove range of IDs from bin selection map
+    //-b             --- set buddy system as the allocation policy (default: first fit)
+    //-h             --- print this help
+    
     /* for instance, consider that you are testing the feqInsert function */
     pauseSim();
     fprintf(fout, "\n\e[31;1m=================================================================\e[0m\n");
