@@ -21,6 +21,8 @@ namespace group
         feqTerm();
 
         forthcomingTable.count = 0;
+        simTime = 0;
+        stepCount = 0;
     }
 
     // ================================================================================== //

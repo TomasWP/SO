@@ -1,5 +1,5 @@
 /*
- *  \author ...
+ *  \author: Tomás Sousa Fonseca 107245
  */
 
 #include "somm23.h"

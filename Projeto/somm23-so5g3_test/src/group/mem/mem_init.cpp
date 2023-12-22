@@ -23,9 +23,9 @@ namespace group
 
         try{
             memParameters.chunkSize = cSize;
-            memParameters.totalSize = mSize;
             memParameters.kernelSize= osSize;
             memParameters.policy    = policy;
+            memParameters.totalSize = mSize;
 
             if (policy == FirstFit) 
             {
@@ -61,10 +61,14 @@ namespace group
                 memFreeHead = NULL;
                 memOccupiedHead = NULL;
 
+                uint32_t total_mem = cSize;
+                while (total_mem * 2 <= mSize - osSize) 
+                    total_mem <<= 1; 
+
                 // Allocate memory for the new MemBlock
                 MemBlock* newBlock = new MemBlock;
                 newBlock->pid = 0; // 0 indicates the block is free
-                newBlock->size = mSize - osSize;
+                newBlock->size = total_mem;
                 newBlock->address = osSize; // The start address of the block is right after the OS
 
                 // Allocate memory for the new MemTreeNode and set its block field to the new MemBlock

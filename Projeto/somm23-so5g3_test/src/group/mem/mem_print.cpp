@@ -14,9 +14,9 @@ namespace group
     // Helper function to print a memory block
     void printBlock(FILE *fout, const MemBlock &block, MemTreeNodeType isFreeBlock) {
         if (isFreeBlock == FREE) {
-            fprintf(fout, "|   ---   |     0x%05x |     %6u |\n", block.address, block.size);
+            fprintf(fout, "|   ---   |    %#8x |   %8u |\n", block.address, block.size);
         } else if (isFreeBlock == OCCUPIED){
-            fprintf(fout, "|    %4u |     0x%05x |     %6u |\n", block.pid, block.address, block.size);
+            fprintf(fout, "|    %4u |    %#8x |   %8u |\n", block.pid, block.address, block.size);
         }
     } 
     

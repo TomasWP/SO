@@ -16,63 +16,56 @@ namespace group {
 
         /* TODO POINT: Replace next instruction with your code */
 
-        MemListNode* currentNode = memOccupiedHead;
+        MemListNode* currentOccupied = memOccupiedHead;
+        MemListNode* previousOccupied = NULL;
 
-        while (currentNode != NULL && currentNode->block.address != address) {
-            currentNode = currentNode->next;
+        while (currentOccupied != NULL && currentOccupied->block.address != address) {
+            previousOccupied = currentOccupied;
+            currentOccupied = currentOccupied->next;
         }
 
-        require(currentNode != NULL, "Block with the given address not found");
-
-        currentNode->block.pid = 0;
-
-        if (currentNode->prev != NULL && currentNode->prev->block.pid == 0) {
-            currentNode->prev->block.size += currentNode->block.size;
-            currentNode->prev->next = currentNode->next;
-
-            if (currentNode == memOccupiedHead) {
-                memOccupiedHead = currentNode->next;
-            }
-
-            delete currentNode;
-            currentNode = currentNode->prev;
+        if (currentOccupied == NULL) {
+            throw Exception(EINVAL, __func__);
         }
 
-        if (currentNode->next != NULL && currentNode->next->block.pid == 0) {
-            currentNode->block.size += currentNode->next->block.size;
-            MemListNode* toDelete = currentNode->next;
-            currentNode->next = currentNode->next->next;
-            delete toDelete;
-        }
-
-  
-        if (memFreeHead == NULL || address < memFreeHead->block.address) {
-            currentNode->next = memFreeHead;
-            currentNode->prev = NULL;
-
-            if (memFreeHead != NULL) {
-                memFreeHead->prev = currentNode;
-            }
-
-            memFreeHead = currentNode;
+        if (previousOccupied != NULL) {
+            previousOccupied->next = currentOccupied->next;
         } else {
-            MemListNode* temp = memFreeHead;
+            memOccupiedHead = currentOccupied->next;
+        }
 
-            while (temp->next != NULL && temp->next->block.address < address) {
-                temp = temp->next;
+        if(currentOccupied->next != NULL){
+            currentOccupied->next->prev = previousOccupied;
+        }
+
+        MemListNode* currentFree = memFreeHead;
+        MemListNode* previousFree = NULL;
+
+        while (currentFree != NULL && currentFree->block.address < address) {
+            previousFree = currentFree;
+            currentFree = currentFree->next;
+        }
+
+        if (previousFree != NULL && previousFree->block.address + previousFree->block.size == address) {
+            previousFree->block.size += currentOccupied->block.size;
+        } else {
+
+            currentOccupied->next = currentFree;
+            currentOccupied->prev = previousFree;
+            if (previousFree != NULL) {
+                previousFree->next = currentOccupied;
+            } else {
+                memFreeHead = currentOccupied;
             }
+            previousFree = currentOccupied;
+        }
 
-            currentNode->next = temp->next;
-            currentNode->prev = temp;
-
-            if (temp->next != NULL) {
-                temp->next->prev = currentNode;
-            }
-
-            temp->next = currentNode;
+        if (currentFree != NULL && previousFree->block.address + previousFree->block.size == currentFree->block.address) {
+            previousFree->block.size += currentFree->block.size;
+            previousFree->next = currentFree->next;
+            delete currentFree;
         }
     }
-
 // ================================================================================== //
 
 }  // end of namespace group

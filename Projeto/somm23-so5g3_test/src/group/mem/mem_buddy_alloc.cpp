@@ -24,7 +24,6 @@ namespace group
  
         if (memTreeRoot == NULL)
             throw Exception(EINVAL, __func__);
-
         return getAddress(pid, memTreeRoot, size);
     }
 
