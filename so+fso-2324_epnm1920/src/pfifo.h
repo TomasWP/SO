@@ -33,6 +33,7 @@ typedef struct
    int out;  ///< point of retrieval (queue head)
    int cnt;  ///< number of items stored
    // TODO point: if necessary, add synchronization declarations here
+   int sem_id;
 } PriorityFIFO;
 
 void init_pfifo(PriorityFIFO* pfifo);

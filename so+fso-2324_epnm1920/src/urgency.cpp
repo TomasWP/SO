@@ -62,7 +62,8 @@ typedef struct
 HospitalData * hd = NULL;
 
 // TODO point: if necessary, add module variables here
-
+static int shmid; // Shared Memory ID
+static int patients_sems;  // The Patients Semaphores ID (for keeping the Patients until the end of consultation)
 
 /**
  *  \brief verification tests:
@@ -81,6 +82,11 @@ void random_wait();
 // TODO point: changes may be required to this function
 void init_simulation(int np)
 {
+   // Create np Semaphores (one for each Patient, to control who is good to go)
+   patients_sems = psemget(IPC_PRIVATE, np, 0600 | IPC_CREAT | IPC_EXCL); // np Semaphores
+
+   // Shared Memory Creation
+   shmid = pshmget(IPC_PRIVATE, sizeof(HospitalData), 0600 | IPC_CREAT | IPC_EXCL);
    printf("Initializing simulation\n");
    hd = (HospitalData*)mem_alloc(sizeof(HospitalData)); // mem_alloc is a malloc with NULL pointer verification
    memset(hd, 0, sizeof(HospitalData));
@@ -99,7 +105,11 @@ void term_simulation(int np) {
    printf("Releasing resources\n");
    term_pfifo(&hd->doctor_queue);
    term_pfifo(&hd->triage_queue);
-   free(hd);
+   // Detach Shared Memory
+   pshmdt((void*)hd);
+   
+   // Destroy Shared Memory
+   pshmctl(shmid, IPC_RMID, NULL);
    hd = NULL;
 }
 
@@ -136,6 +146,8 @@ int doctor_iteration(int id) // return value can be used to request termination
    printf("\e[32;01mDoctor %d: patient %d treated\e[0m\n", id, patient);
    // TODO point: PUT YOUR PATIENT CONSULTATION FINISHED NOTIFICATION CODE HERE:
    hd->all_patients[patient].done = 1;
+   // Increment the Patients Semaphore so that he knows he can leave the Hospital
+   psem_up(patients_sems, patient);
 
    return 0;
 }
@@ -155,6 +167,9 @@ void patient_wait_end_of_consultation(int id)
 {
    check_valid_name(hd->all_patients[id].name);
    // TODO point: PUT YOUR WAIT CODE FOR FINISHED CONSULTATION HERE:
+
+   //Decrement the patient sem to indicate he is in a consultation
+   psem_down(patients_sems, id);
    printf("\e[30;01mPatient %s (number %d): health problems treated\e[0m\n", hd->all_patients[id].name, id);
 }
 
@@ -227,11 +242,47 @@ int main(int argc, char *argv[])
    /* dummy code to show a very simple sequential behavior */
    for(int i = 0; i < npatients; i++)
    {
-      printf("\n");
-      random_wait(); // random wait for patience creation
-      patient_life(i);
+      pid_t pid = pfork();
+      if (pid == 0) // Child process
+      {
+         patient_life(i);
+         // When the patient was processed and treated, we end his life to indicate is good to go
+         exit(0);
+      }
    }
-   /* end of dummy code */
+
+   for(int i = 0; i < nnurses; i++)
+   {
+      pid_t p = pfork();
+      if (p == 0) // Child process
+      {
+         while (hd->triage_queue.cnt != 0) // This can be identified on the PDF
+         {
+            nurse_iteration(i);
+         }
+         // We only terminate the doctors when there are no more patients in the triage
+         exit(0);
+      }
+   }
+
+   for(int i = 0; i< ndoctors; i++)
+   {
+      pid_t pid = pfork();
+      if (p == 0){
+         while(hd->doctor_queue.cnt != 0) // This can be identified on the PDF
+         {
+            doctor_iteration(i);
+         }
+         // We only terminate the doctors when there are no more patients in the doctors queue
+         exit(0);
+      }
+   }
+
+   // Wait for Patients, Nurses and Doctors processes to end
+   for(int i = 0; i < npatients + nnurses + ndoctors; i++)
+   {
+      wait(NULL);
+   }
 
    /* terminate simulation */
    term_simulation(npatients);
