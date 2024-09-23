@@ -13,12 +13,24 @@
 SllNode* sllDestroy(SllNode* list)
 {
     return list;
+
+    
 }
 
 /*******************************************************/
 
 void sllPrint(SllNode *list, FILE *fout)
 {
+    if(!list){
+        fprintf(fout,"Lista Vazia!\n");
+        return;
+    }else{
+        SllNode* current = list;
+        while(current != NULL){
+            fprintf(fout,"Nmec: %u, Nome: %s", current->reg.nmec, current->reg.name);
+            current = current->next;
+        }
+    }
 }
 
 /*******************************************************/
@@ -28,7 +40,13 @@ SllNode* sllInsert(SllNode* list, uint32_t nmec, const char *name)
     assert(name != NULL && name[0] != '\0');
     assert(!sllExists(list, nmec));
 
-    return list;
+    SllNode* newnode = (SllNode*)malloc(sizeof(SllNode));   // alocar memória para um novo nó usando malloc
+
+    newnode->reg.nmec = nmec;
+    newnode->reg.name = strdup(name);
+    newnode->next = NULL;
+
+    // CONTINUAR AQUI
 }
 
 /*******************************************************/

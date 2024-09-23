@@ -1,0 +1,7 @@
+gcc -o file.cpp
+
+origina o ficheiro file.o
+
+gcc file.o main.o
+
+liga todos os ficheiros compilados
