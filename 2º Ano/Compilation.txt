@@ -1,4 +1,5 @@
 gcc -o file.cpp
+gcc -o program main.cpp linked-list.cpp
 
 origina o ficheiro file.o
 

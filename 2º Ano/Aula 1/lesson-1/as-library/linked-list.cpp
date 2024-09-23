@@ -46,7 +46,20 @@ SllNode* sllInsert(SllNode* list, uint32_t nmec, const char *name)
     newnode->reg.name = strdup(name);
     newnode->next = NULL;
 
-    // CONTINUAR AQUI
+    if(list == NULL || newnode->reg.nmec > nmec){
+        newnode->next = list;
+        return newnode;
+    }
+
+    SllNode* current = list;
+    while(current->next != NULL && current->next->reg.nmec < nmec){
+        current = current->next;
+    }
+
+    current->next = newnode;
+    newnode->next = current->next;
+
+    return list;
 }
 
 /*******************************************************/
