@@ -12,9 +12,17 @@
 
 SllNode* sllDestroy(SllNode* list)
 {
-    return list;
+    SllNode* current = list;
+    SllNode* nextnode = NULL;
 
+    while(current != NULL){
+
+        nextnode = current->next;
+        free(current);
+        current = nextnode;
+    }
     
+    return NULL;
 }
 
 /*******************************************************/
@@ -82,6 +90,14 @@ SllNode* sllInsert(SllNode* list, uint32_t nmec, const char *name)
 
 bool sllExists(SllNode* list, uint32_t nmec)
 {
+    SllNode* current = list;
+    while(current != NULL && nmec >= current->reg.nmec){
+        if(current->reg.nmec == nmec){
+
+            return true;
+        }
+        current = current->next;
+    }
     return false;
 }
 
@@ -89,8 +105,38 @@ bool sllExists(SllNode* list, uint32_t nmec)
 
 SllNode* sllRemove(SllNode* list, uint32_t nmec)
 {
-    assert(list != NULL);
-    assert(sllExists(list, nmec));
+    if(list == NULL){
+        printf("Erro: a lista está vazia.\n");
+        return NULL;
+    }
+
+    if(!sllExists(list, nmec)){
+        printf("Erro: nmec %u não encontrado na lista.\n", nmec);
+        return NULL;
+    }
+
+    SllNode* current = list;
+    SllNode* previous = NULL;
+    
+    while (current != NULL && current->reg.nmec < nmec) {
+        previous = current;      // Armazena o nó anterior
+        current = current->next; // Avança para o próximo nó
+    }
+
+    // Se chegamos aqui, current pode ser NULL ou o nó a ser removido
+    // Verifica se o nmec é igual ao que queremos remover
+    if (current != NULL && current->reg.nmec == nmec) {
+        // Se o nó a ser removido é o primeiro nó
+        if (previous == NULL) {
+            // Remove o nó da cabeça da lista
+            list = current->next; // Atualiza a cabeça da lista
+        } else {
+            previous->next = current->next; // Conecta o anterior ao próximo do nó atual
+        }
+
+        // Libera a memória do nó removido
+        free(current);
+    }
 
     return list;
 }
@@ -99,8 +145,15 @@ SllNode* sllRemove(SllNode* list, uint32_t nmec)
 
 const char *sllGetName(SllNode* list, uint32_t nmec)
 {
-    assert(list != NULL);
-    assert(sllExists(list, nmec));
+    if (list == NULL) {
+        printf("Erro: a lista está vazia.\n");
+        return NULL;
+    }
+
+    if (!sllExists(list, nmec)) {
+        printf("Erro: nmec %u não encontrado na lista.\n", nmec);
+        return NULL;
+    }
 
     SllNode* current = list;
     printf("Procurando nmec: %u\n", nmec);
