@@ -46,9 +46,8 @@ void sllPrint(SllNode *list, FILE *fout)
 SllNode* sllInsert(SllNode* list, uint32_t nmec, const char *name)
 {
     assert(name != NULL && name[0] != '\0'); // Pré-condição do nome
-    assert(!sllExists(list, nmec)); // Pré-condição de que o nmec não deve existir
-
-    // Criar um novo nó
+    if(!sllExists(list, nmec)){ // Pré-condição de que o nmec não deve existir
+        // Criar um novo nó
     SllNode* newNode = (SllNode*)malloc(sizeof(SllNode));
     if (!newNode) {
         perror("Failed to allocate memory for new node");
@@ -84,6 +83,8 @@ SllNode* sllInsert(SllNode* list, uint32_t nmec, const char *name)
     current->next = newNode;
 
     return list; // Retornar o cabeçalho da lista
+    }
+    return list;
 }
 
 /*******************************************************/
@@ -181,7 +182,7 @@ SllNode* sllLoad(SllNode *list, FILE *fin, bool *ok)
 {
     assert(fin != NULL);
 
-    if (ok != NULL){
+    if (ok == NULL){
        *ok = false; // load failure
     }else{
         *ok = true; // load success
@@ -189,7 +190,7 @@ SllNode* sllLoad(SllNode *list, FILE *fin, bool *ok)
         int numero;
 
         // Ler o ficheiro linha por linha
-        while (fscanf(fin, " %[^\;];%d", nome, &numero) == 2) {
+        while (fscanf(fin, " %[^\n,], %d", nome, &numero) == 2) {
             // Inserir na lista
             list = sllInsert(list, numero, nome);
         }
