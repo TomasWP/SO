@@ -181,9 +181,23 @@ SllNode* sllLoad(SllNode *list, FILE *fin, bool *ok)
 {
     assert(fin != NULL);
 
-    if (ok != NULL)
+    if (ok != NULL){
        *ok = false; // load failure
+    }else{
+        *ok = true; // load success
+        char nome[100];
+        int numero;
 
+        // Ler o ficheiro linha por linha
+        while (fscanf(fin, " %[^\;];%d", nome, &numero) == 2) {
+            // Inserir na lista
+            list = sllInsert(list, numero, nome);
+        }
+
+        // Fechar o ficheiro
+        fclose(fin);
+        return list;
+    }
     return NULL;
 }
 
