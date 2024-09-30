@@ -7,3 +7,9 @@ origina o ficheiro file.o
 gcc file.o main.o
 
 liga todos os ficheiros compilados
+
+
+make fork1
+./fork1
+
+documentacao: man 2 fork
