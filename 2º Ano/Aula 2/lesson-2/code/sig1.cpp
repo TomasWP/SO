@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define NTIMES 20
+#define NTIMES 40
 
 int main(void)
 {

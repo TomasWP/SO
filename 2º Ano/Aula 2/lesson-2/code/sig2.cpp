@@ -7,14 +7,15 @@
 
 #include "process.h"
 
-#define NTIMES 20
+#define NTIMES 40
 
 static void Interrupt (int signum)
 {
     if (signum == SIGINT) {
         printf("\nStay calm, I haven't reached %u yet!\n", NTIMES);
     }
-    else { 
+    else
+    { 
         printf ("A signal different from SIGINT was received\n");
         exit (EXIT_FAILURE);
     }
@@ -28,6 +29,8 @@ int main(void)
     sigemptyset (&sigact.sa_mask);
     sigact.sa_flags = 0;
     psigaction (SIGINT, &sigact, NULL);
+    psigaction (SIGTERM, &sigact, NULL);
+
 
     /* counting */
     printf("PID = %u\n", getpid());
@@ -41,4 +44,3 @@ int main(void)
 
     return EXIT_SUCCESS;
 }
-
