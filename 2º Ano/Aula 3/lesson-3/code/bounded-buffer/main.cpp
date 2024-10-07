@@ -156,8 +156,7 @@ int main (int argc, char *argv[])
     /* wait for consumers fo finish */
     for (uint32_t i = 0; i < nc; i++)
     {
-        //pkill(cpid[i], SIGTERM);      analisar linha de codigo
-        pwaitpid(cpid[i], NULL, 0);
+        pkill(cpid[i], SIGTERM);
         printf("Consumer %u finished\n", i+1);
     }
 
