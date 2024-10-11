@@ -19,6 +19,9 @@
 #include "process.h"
 #include "fifo.h"
 
+#define DUMMY_ITEM (Item){0, 0, 0}  // special item for termination
+
+
 static void printUsage(FILE* fp, const char* cmd)
 {
     fprintf(fp, "Synopsis %s [options]\n"
@@ -65,6 +68,12 @@ void consumer(uint32_t id, Fifo *f)
         /* retrieve item from fifo */
         Item item = fifoRetrieve(f);
 
+        if (item.id == 0 && item.v1 == 0 && item.v2 == 0)  // check for dummy item
+        {
+            printf("Consumer %u received exit signal and is terminating\n", id);
+            break;
+        }
+
         /* print it */
         uint32_t id1 = item.v1 / 1000000;
         uint32_t id2 = item.v2 / 1000000;
@@ -72,6 +81,8 @@ void consumer(uint32_t id, Fifo *f)
             printf("\e[31;01mConsumer %u retrieved (%u,%u,%u) from the fifo\e[0m\n", id, item.id, item.v1, item.v2);
     }
 }
+
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -153,10 +164,16 @@ int main (int argc, char *argv[])
         printf("Producer %u finished\n", i+1);
     }
 
+    /* Insert dummy items to signal consumers to terminate */
+    for (uint32_t i = 0; i < nc; i++)
+    {
+        fifoInsert(theFifo, DUMMY_ITEM);
+    }
+
     /* wait for consumers fo finish */
     for (uint32_t i = 0; i < nc; i++)
     {
-        pkill(cpid[i], SIGTERM);
+        pwaitpid(cpid[i], NULL, 0);
         printf("Consumer %u finished\n", i+1);
     }
 
