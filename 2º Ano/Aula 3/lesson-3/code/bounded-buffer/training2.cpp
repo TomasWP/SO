@@ -26,7 +26,6 @@ int main(void)
     *shared_counter = input;
     printf("Start Value: %d\n", *shared_counter);
     psem_up(sems, CHILD1_SEM);
-    sleep(1);
 
     pid_t pid_child1 = pfork();
 
