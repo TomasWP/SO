@@ -41,7 +41,7 @@ int main(void)
                 break;
             }
             (*shared_counter)--;
-            printf("Child 1 (PID: %d) decrementing: %d\n", pid_child1, *shared_counter);
+            printf("Child 1 (PID: %d) decrementing: %d\n", getpid(), *shared_counter);
             psem_up(sems, CHILD2_SEM);
             sleep(1);
         }
@@ -55,7 +55,7 @@ int main(void)
                 break;
             }
             (*shared_counter)--;
-            printf("Child 2 (PID: %d) decrementing: %d\n", pid_child2, *shared_counter);
+            printf("Child 2 (PID: %d) decrementing: %d\n", getpid(), *shared_counter);
             psem_up(sems, CHILD1_SEM);
             sleep(1);
         }
