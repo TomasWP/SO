@@ -68,8 +68,8 @@ int main(void)
         pshmctl(shmid, IPC_RMID, NULL);
 
         psemctl(sems, CHILD1_SEM, IPC_RMID); // Remover o conjunto de semáforos
-        psemctl(sems, 0, CHILD2_SEM); // Remover o conjunto de semáforos
-
+        psemctl(sems, 0, CHILD2_SEM, IPC_RMID); // Remover o conjunto de semáforos
+        
         printf("Parent process finished.\n");
     }
 
