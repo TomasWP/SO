@@ -24,7 +24,7 @@ int main(void)
     int shmid = pshmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | 0600);
     int *shared_counter = (int *)pshmat(shmid, NULL, 0);
     *shared_counter = input;
-    printf("Start Value: %d", *shared_counter);
+    printf("Start Value: %d\n", *shared_counter);
 
     pid_t pid_child1 = pfork();
     pid_t pid_child2 = pfork();
