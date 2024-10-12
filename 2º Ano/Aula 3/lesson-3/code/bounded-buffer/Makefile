@@ -18,10 +18,10 @@ bb-safe: main.o fifo-sem-safe.o $(OBJS) $(HEADERS)
 	$(CXX) -o $@ main.o fifo-sem-safe.o $(OBJS) $(CXXFLAGS)
 
 training1: training1.o $(OBJS) $(HEADERS)
-	$(CXX) -o $@ main.o training1.o $(OBJS) $(CXXFLAGS)
+	$(CXX) -o $@ training1.o $(OBJS) $(CXXFLAGS)
 
 training2: training2.o $(OBJS) $(HEADERS)
-	$(CXX) -o $@ main.o training2.o $(OBJS) $(CXXFLAGS)
+	$(CXX) -o $@ training2.o $(OBJS) $(CXXFLAGS)
 
 clean:
 	rm -f *.o

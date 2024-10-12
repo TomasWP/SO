@@ -13,7 +13,7 @@ int main(void)
     int input;
 
     // create the semaphores for the odd numbers and the even number
-    int sems = psemget(IPC_PRIVATE, 3, IPC_CREAT | 0600);
+    int sems = psemget(IPC_PRIVATE, 2, IPC_CREAT | 0600);
 
     do{
 
@@ -25,40 +25,49 @@ int main(void)
     int *shared_counter = (int *)pshmat(shmid, NULL, 0);
     *shared_counter = input;
     printf("Start Value: %d\n", *shared_counter);
+    psem_up(sems, CHILD1_SEM);
+    sleep(1);
 
     pid_t pid_child1 = pfork();
-    pid_t pid_child2 = pfork();
 
-    psem_up(sems, CHILD1_SEM);
 
     if(pid_child1 == 0){
         
         while(1){
 
             psem_down(sems, CHILD1_SEM);
+
             if(*shared_counter <= 1){
                 psem_up(sems, CHILD2_SEM);
                 break;
             }
             (*shared_counter)--;
             printf("Child 1 (PID: %d) decrementing: %d\n", getpid(), *shared_counter);
-            psem_up(sems, CHILD2_SEM);
             sleep(1);
+            psem_up(sems, CHILD2_SEM);
         }
-    }else if(pid_child2 == 0){
+        exit(0);
+    }
+    
+    pid_t pid_child2 = pfork();
+
+    if(pid_child2 == 0){
         
         while(1){
 
             psem_down(sems, CHILD2_SEM);
+
             if(*shared_counter <= 1){
                 psem_up(sems, CHILD1_SEM);
                 break;
             }
             (*shared_counter)--;
             printf("Child 2 (PID: %d) decrementing: %d\n", getpid(), *shared_counter);
-            psem_up(sems, CHILD1_SEM);
             sleep(1);
+            psem_up(sems, CHILD1_SEM);
         }
+        exit(0);
+
     }else{
 
         pwaitpid(pid_child1, NULL, 0);
@@ -67,9 +76,8 @@ int main(void)
         pshmdt(shared_counter);
         pshmctl(shmid, IPC_RMID, NULL);
 
-        psemctl(sems, CHILD1_SEM, IPC_RMID); // Remover o conjunto de semáforos
-        psemctl(sems, 0, CHILD2_SEM, IPC_RMID); // Remover o conjunto de semáforos
-        
+        psemctl(sems, 0, IPC_RMID);  // Remove o conjunto de semáforos
+    
         printf("Parent process finished.\n");
     }
 
