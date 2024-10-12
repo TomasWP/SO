@@ -62,21 +62,6 @@
 #include <semaphore.h>
 #include <signal.h>
 
-int pshmget(key_t key, size_t size, int shmflg) {
-    return shmget(key, size, shmflg);
-}
-
-void *pshmat(int shmid, const void *shmaddr, int shmflg) {
-    return shmat(shmid, shmaddr, shmflg);
-}
-
-pid_t pfork() {
-    return fork();
-}
-
-int pwait(int *status) {
-    return wait(status);
-}
 
 //#define EXCEPTION_POLICY
 //#define EXIT_POLICY // DEFAULT

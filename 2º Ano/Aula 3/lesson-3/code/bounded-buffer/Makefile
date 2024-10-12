@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -ggdb -pthread
 
-TARGETS = bb-unsafe bb-safe training1
+TARGETS = bb-unsafe bb-safe training1 training2
 
 HEADERS = fifo.h process.h utils.h dbc.h
 
