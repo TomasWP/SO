@@ -38,7 +38,7 @@ void *child_thread1(void *arg){
         sleep(1);
         mutex_unlock(&mutex);
     }
-    thread_exit(NULL);
+    pthread_exit(NULL);
 
     return NULL;
 }
@@ -66,7 +66,7 @@ void *child_thread2(void *arg){
         sleep(1);
         mutex_unlock(&mutex);
     }
-    thread_exit(NULL);
+    pthread_exit(NULL);
 
     return NULL;
 }
@@ -91,11 +91,11 @@ int main(void)
 
 
     pthread_t first_thread, second_thread;
-    thread_create(&first_thread, NULL, child_thread1, NULL);
-    thread_create(&second_thread, NULL, child_thread2, NULL);
+    pthread_create(&first_thread, NULL, child_thread1, NULL);
+    pthread_create(&second_thread, NULL, child_thread2, NULL);
 
-    thread_join(first_thread, NULL);
-    thread_join(second_thread, NULL);
+    pthread_join(first_thread, NULL);
+    pthread_join(second_thread, NULL);
 
     mutex_destroy(&mutex);
     cond_destroy(&cond1);
