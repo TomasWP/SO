@@ -81,12 +81,11 @@ int getPendingRequest(){
         cond_wait(&pending_cond, &mutex);
     }
 
-    int resp = pendingRequests[pending_count--];
+    int resp = pendingRequests[--pending_count];
 
     mutex_unlock(&mutex);
 
     return resp;
-
 }
 
 void releaseBuffer(int id){
@@ -97,6 +96,26 @@ void releaseBuffer(int id){
     pthread_cond_signal(&free_cond);    // Notifica que um buffer foi liberado
 
     mutex_unlock(&mutex);
+}
+
+int getRequestData(int id){
+
+    return buffers_pool[id];
+}
+
+int produceResponse(int req){
+
+    return req * 2;
+}
+
+void putResponseData(int resp, int id){
+
+    buffers_pool[id] = resp;
+}
+
+void notifyClient(int id){
+
+    pthread_cond_signal(&response_cond);
 }
 
 void *client(void *arg){
@@ -112,12 +131,13 @@ void *client(void *arg){
 }
 
 void *server(void *arg){
-
-    id = getPendingRequest (); /* take a buffer id out of fifo of pending requests */
-    req = getRequestData ( id ); /* take the request */
-    resp = produceResponse ( req ); /* produce a response */
-    putResponseData ( resp , id ); /* put response data on buffer */
-    notifyClient ( id ); /* so client is waked up */
+    while (1) {
+        id = getPendingRequest (); /* take a buffer id out of fifo of pending requests */
+        req = getRequestData ( id ); /* take the request */
+        resp = produceResponse ( req ); /* produce a response */
+        putResponseData ( resp , id ); /* put response data on buffer */
+        notifyClient ( id ); /* so client is waked up */
+    }
 }
 
 int main(void)
