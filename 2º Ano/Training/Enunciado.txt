@@ -1,0 +1,13 @@
+Enunciado 1: Gestão de Vagas em um Estacionamento de Shopping
+
+Implemente um simulador que controla o fluxo de entrada e saída de carros em um estacionamento de um shopping. O estacionamento possui um número limitado de vagas, e os carros devem esperar que uma vaga seja liberada caso o estacionamento esteja cheio.
+
+Alineas:
+(a) Implementação do Sistema de Vagas: Crie um módulo para gerir as vagas de forma segura e partilhada, permitindo que a entrada de novos carros só ocorra se houver vagas disponíveis.
+(b) Entrada de Carros: Implemente a entidade que representa a entrada de carros no estacionamento. Se não houver vagas, o carro deve esperar até que uma vaga seja liberada.
+(c) Saída de Carros: Implemente a entidade responsável pela saída de carros do estacionamento, liberando uma vaga para outro carro.
+(d) Monitoramento das Vagas Disponíveis: Implemente uma função para monitorar e exibir o número de vagas disponíveis em tempo real.
+(e) Encerramento do Estacionamento: Implemente uma função para encerrar o estacionamento, garantindo que todos os carros saiam antes do fechamento.
+
+
+
