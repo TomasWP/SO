@@ -1,6 +1,10 @@
 #ifndef PFIFO_H
 #define PFIFO_H
 
+#include <stdint.h>
+#include  "settings.h"
+#include "thread.cpp"
+
 // Estrutura para o FIFO (First In First Out)
 typedef struct {
     int* buffer;         // Buffer para armazenar os IDs dos carros
@@ -8,6 +12,8 @@ typedef struct {
     int size;            // Tamanho atual da fila
     int front;           // Índice da frente da fila
     int rear;            // Índice da parte de trás da fila
+    pthread_mutex_t mutex;
+    pthread_cond_t notEmpty, notFull;
 } pfifo_t;
 
 // Funções para gerenciar o FIFO
