@@ -308,11 +308,11 @@ int main(int argc, char *argv[])
    close_pfifo(&hd->doctor_queue);
 
    for(int i=0; i<ndoctors;i++){
-      thread_join(alldoctors[i],NULL);
+      thread_join(all_doctors[i],NULL);
    }
 
    for(int i=0; i<nnurses;i++){
-      thread_join(allnurses[i],NULL)
+      thread_join(all_nurses[i],NULL);
    }
 
    /* terminate simulation */
