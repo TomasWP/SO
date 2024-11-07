@@ -118,9 +118,9 @@ void close_pfifo(PriorityFIFO* pfifo)
    require (pfifo != NULL, "NULL pointer to FIFO");           // a false value indicates a program error
    require (!is_closed_pfifo(pfifo), "FIFO already closed");  // a false value indicates a program error
    mutex_lock(&pfifo->mutex);
-   pfifo->is_closed = 1;
    cond_broadcast(&pfifo->notempty);
    cond_broadcast(&pfifo->notfull);
+   pfifo->is_closed = 1;
    mutex_unlock(&pfifo->mutex);
 }
 
