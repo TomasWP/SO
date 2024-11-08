@@ -48,7 +48,7 @@ typedef struct
    char name[MAX_NAME+1];
    int done; // 0: waiting for consultation; 1: consultation finished
    // TODO point: if necessary, add new fields here
-   pthread_mutex_t patient;
+   pthread_mutex_t patient_mutex;
    pthread_cond_t patient_done;
 } Patient;
 
@@ -121,7 +121,12 @@ int nurse_iteration(int id) // return value can be used to request termination
    printf("\e[34;01mNurse %d: evaluate patient %d priority\e[0m\n", id, patient);
    int priority = random_manchester_triage_priority();
    printf("\e[34;01mNurse %d: add patient %d with priority %d to doctor queue\e[0m\n", id, patient, priority);
+   
    insert_pfifo(&hd->doctor_queue, patient, priority);
+   
+   if(patient == 3){
+      close_pfifo(&hd->triage_queue);
+   }
 
    return 0;
 }
@@ -143,10 +148,11 @@ int doctor_iteration(int id) // return value can be used to request termination
    random_wait();
    printf("\e[32;01mDoctor %d: patient %d treated\e[0m\n", id, patient);
    // TODO point: PUT YOUR PATIENT CONSULTATION FINISHED NOTIFICATION CODE HERE:
-   mutex_lock(&hd->all_patients[patient].patient);
-   cond_broadcast(&hd->all_patients[patient].patient_done);
+   mutex_lock(&hd->all_patients->patient_mutex);
    hd->all_patients[patient].done = 1;
-   mutex_unlock(&hd->all_patients[patient].patient);
+   cond_broadcast(&hd->all_patients->patient_done);
+   mutex_unlock(&hd->all_patients->patient_mutex);
+
    return 0;
 }
 
@@ -156,8 +162,8 @@ void patient_goto_urgency(int id)
 {
    new_patient(&hd->all_patients[id]);
    check_valid_name(hd->all_patients[id].name);
-   mutex_init(&hd->all_patients->patient, NULL);
-   cond_init(&hd->all_patients->patient_done, NULL); 
+   mutex_init(&hd->all_patients->patient_mutex, NULL);
+   cond_init(&hd->all_patients->patient_done, NULL);
    printf("\e[30;01mPatient %s (number %d): get to hospital\e[0m\n", hd->all_patients[id].name, id);
    insert_pfifo(&hd->triage_queue, id, 1); // all elements in triage queue with the same priority!
 }
@@ -167,12 +173,10 @@ void patient_wait_end_of_consultation(int id)
 {
    check_valid_name(hd->all_patients[id].name);
    // TODO point: PUT YOUR WAIT CODE FOR FINISHED CONSULTATION HERE:
-   mutex_lock(&hd->all_patients[id].patient);
    while(hd->all_patients[id].done == 0){
-      cond_wait(&hd->all_patients[id].patient_done, &hd->all_patients[id].patient);
+      cond_wait(&hd->all_patients->patient_done, &hd->all_patients->patient_mutex);
    }
    printf("\e[30;01mPatient %s (number %d): health problems treated\e[0m\n", hd->all_patients[id].name, id);
-   mutex_unlock(&hd->all_patients[id].patient);
 }
 
 // TODO point: changes are required to this function
@@ -182,8 +186,8 @@ void patient_life(int id)
    //nurse_iteration(0);  // TODO point: to be commented/deleted in concurrent version
    //doctor_iteration(0); // TODO point: to be commented/deleted in concurrent version
    patient_wait_end_of_consultation(id);
-   mutex_destroy(&hd->all_patients[id].patient);
-   cond_destroy(&hd->all_patients[id].patient_done);
+   mutex_destroy(&hd->all_patients->patient_mutex);
+   cond_destroy(&hd->all_patients->patient_done);
    memset(&(hd->all_patients[id]), 0, sizeof(Patient)); // patient finished
 }
 
@@ -194,29 +198,29 @@ void patient_life(int id)
 void* patient_thread(void* arg){
    int id = *((int*)arg);
    patient_life(id);
-
-
    return NULL;
 }
 
-void* nurses_thread(void* arg){
+void* nurse_thread(void* arg){
+
    int id = *((int*)arg);
-   int value = 0;
-   while(value == 0){
-      value = nurse_iteration(id);
+   int return_value = 0;
+   while(return_value == 0){
+      return_value = nurse_iteration(id);
    }
+   printf("triage queue closed: %d\n", is_closed_pfifo(&hd->triage_queue));
    return NULL;
 }
 
 void* doctor_thread(void* arg){
+
    int id = *((int*)arg);
-   int value = 0;
-   while(value==0){
-      value = doctor_iteration(id);
+   int return_value = 0;
+   while(return_value == 0){
+      return_value = doctor_iteration(id);
    }
-
+   printf("doctor queue closed: %d\n", is_closed_pfifo(&hd->doctor_queue));
    return NULL;
-
 }
 
 /* ************************************************* */
@@ -280,25 +284,35 @@ int main(int argc, char *argv[])
    }
     end of dummy code */
 
-   pthread_t all_patients[npatients];
+   pthread_t allPatients[npatients];
    int patients_id[npatients];
-   for(int i = 0; i<npatients; i++){
+   for(int i = 0; i < npatients; i++){
       patients_id[i] = i;
-      thread_create(&all_patients[i], NULL, patient_thread, (void*)&patients_id[i]);
+      thread_create(&allPatients[i], NULL, patient_thread, (void*) &patients_id[i]);
    }
 
-   pthread_t all_nurses[nnurses];
+   pthread_t allNurses[nnurses];
    int nurses_id[nnurses];
    for(int i = 0; i < nnurses; i++){
       nurses_id[i] = i;
-      thread_create(&all_nurses[i], NULL, nurses_thread, (void*)&nurses_id[i]);
+      thread_create(&allNurses[i], NULL, nurse_thread, (void*) &nurses_id[i]);
    }
 
-   pthread_t all_doctors[ndoctors];
+   pthread_t allDoctors[ndoctors];
    int doctors_id[ndoctors];
-   for(int i = 0; i<ndoctors; i++){
+   for(int i = 0; i < ndoctors; i++){
       doctors_id[i] = i;
-      thread_create(&all_doctors[i], NULL, doctor_thread, (void*)&doctors_id[i]);
+      thread_create(&allDoctors[i], NULL, doctor_thread, (void*) &doctors_id[i]);
+   }
+
+
+
+   for(int i = 0; i < nnurses; i++){
+      thread_join(allNurses[i], NULL);
+   }
+
+   for(int i = 0; i < nnurses; i++){
+      thread_join(allDoctors[i], NULL);
    }
 
    /* close fifos */
